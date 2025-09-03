@@ -1,184 +1,310 @@
-unit archivos;
+unit interfaz;
 {$mode ObjFPC}{$H+}
 interface
-const
-     ruta_1='';
-     ruta_2='';
-     DISCAPACIDADES: ARRAY[1..5] OF STRING =
-          ('PROBLEMAS DEL HABLA Y LENGUAJE',
-           'DIFICULTAD PARA ESCRIBIR',
-           'DIFICULTADES DE APRENDIZAJE VISUAL',
-           'MEMORIA Y OTRAS DIFICULTADES DEL PENSAMIENTO',
-           'DESTREZAS SOCIALES INADECUADAS');
 uses
-  Classes, SysUtils;
-type
-  t_dato_alumnos=record
-    legajo:string[10];
-    ayn:string;
-    fecha_nac:string[10];
-    estado:boolean;
-    discapacidades:array [1..5] of boolean;
-  end;
-  t_archivo_alumnos=file of t_dato_alumnos;
-  t_dato_evaluaciones=record
-    legajo:string;
-    fecha_ev:string[10];
-    valoracion:array [1..5] of t_dato_valoracion;
-  end;
-  t_dato_valoracion=0..4;
-  t_archivo_evaluaciones=file of t_dato_evaluaciones;
+  Classes, SysUtils, crt, archivos;
 
-procedure crear_abrir (var archivo_1:t_archivo_alumnos);
-procedure crear_abrir (var archivo_2:t_archivo_evaluaciones);
-procedure cerrar_archivo (var archivo_1:t_archivo_alumnos);
-procedure cerrar_archivo (var archivo_2:t_archivo_evaluaciones);
-procedure leer_archivo (var archivo_1:t_archivo_alumnos);
-procedure escribir_archivo (var archivo_2:t_archivo_evaluaciones);
-procedure cargar_legajo(var r:t_dato_alumnos);
-procedure cargar_ayn(var r:t_dato_alumnos);
-procedure fecha_nac (var r:t_dato_alumnos);
-procedure tiene_disc (var r:t_dato_alumnos);
-procedure alta_alumnos (var a:t_archivo_alumnos);
+procedure menu_principal;
+procedure menu_alumno();
+procedure menu_seguimiento();
+procedure menu_listados();
+procedure menu_estadisticas();
 
 implementation
 
-procedure crear_abrir (var archivo_1:t_archivo_alumnos);
-begin
-     assign(archivo_1,ruta_1);
-     {$I-}
-     reset(archivo_1);
-     {$I+}
-     if IOResult <> 0 then
-     begin
-          rewrite(archivo_1);
-     end;
-end;
-
-procedure crear_abrir (var archivo_2:t_archivo_evaluaciones);
-begin
-     assign(archivo_2,ruta_2);
-     {$I-}
-     reset(archivo_2);
-     {$I+}
-     if IOResult <> 0 then
-     begin
-          rewrite(archivo_2);
-     end;
-end;
-
-procedure cerrar_archivo (var archivo_1:t_archivo_alumnos);
-begin
-     close(archivo_1);
-end;
-
-procedure cerrar_archivo (var archivo_2:t_archivo_evaluaciones);
-begin
-     close(archivo_2);
-end;
-
-procedure leer_archivo (var archivo_1:t_archivo_alumnos; pos:byte; var dato:t_dato);
-begin
-     seek(archivo_1,pos);
-     read(archivo_1,dato);
-end;
-
-procedure leer_archivo (var archivo_2:t_archivo_evaluaciones; pos:byte; var dato:t_dato);
-begin
-     seek(archivo_2,pos);
-     read(archivo_2,dato);
-end;
-
-procedure escribir_archivo (var archivo_1:t_archivo_alumnos; pos:byte; var dato:t_dato);
-begin
-     seek(archivo_1,pos);
-     write(archivo_1,dato);
-end;
-
-procedure escribir_archivo (var archivo_2:t_archivo_evaluaciones; pos:byte; var dato:t_dato);
-begin
-     seek(archivo_2,pos);
-     write(archivo_2,dato);
-end;
-
-procedure cargar_legajo(var r:t_dato_alumnos);
+procedure menu_principal;
 var
-   legajo:string[10];
+   opcion: byte;
 begin
-     write('Por favor ingrese el legajo: ');
-     readln(legajo);
-     while not(legajo_valido(legajo)) do
-     begin
-       writeln('Escriba un legajo valido');
-       readln(legajo);
-     end;
-     r.legajo:=legajo;
+   crear_abrir(arch_alumnos);
+   crear_abrir(arch_evaluaciones);
+   repeat
+      clrscr;
+      textcolor(white);
+      gotoxy(40,10);
+      write('*Bienvenido al sistema de ');
+      textcolor(blue);
+      writeln('seguimiento de aprendizaje*');
+      textcolor(blue);
+      gotoxy(52,12);
+      write('1- ');
+      textcolor(white);
+      writeln('Menu Alumno');
+      gotoxy(52,14);
+      textcolor(blue);
+      write('2- ');
+      textcolor(white);
+      writeln('Menu Seguimiento');
+      gotoxy(52,16);
+      textcolor(blue);
+      write('3- ');
+      textcolor(white);
+      writeln('Menu Listados');
+      gotoxy(52,18);
+      textcolor(blue);
+      write('4- ');
+      textcolor(white);
+      writeln('Menu Estadisticas');
+      gotoxy(52,20);
+      textcolor(blue);
+      write('0- ');
+      textcolor(white);
+      writeln('Salir del programa');
+      gotoxy(52,22);
+      textcolor(blue);
+      write('Respuesta: ');
+      textcolor(white);
+      readln(opcion);
+      validar_opcion(opcion);
+      case opcion of
+        1:menu_alumno();
+        2:menu_seguimiento();
+        3:menu_listados();
+        4:menu_estadisticas();
+      end;
+   until opcion=0;
+   cerrar_archivo(arch_alumnos);
+   cerrar_archivo(arch_evaluaciones);
 end;
 
-procedure cargar_ayn(var r:t_dato_alumnos);
-var
-   ayn:string;
-begin
-     write('Por favor ingrese el apellido y nombre: ');
-     readln(ayn);
-     while not(escadena(ayn)) do
-     begin
-       writeln('Escriba un apellido y nombre valido: ');
-       readln(ayn);
-     end;
-     r.ayn:=ayn;
-end;
 
-procedure fecha_nac (var r:t_dato_alumnos);
+procedure menu_alumno();
 var
-   f:string[10];
-begin
-     writeln('Por favor ingrese la fecha de nacimiento: (dd/mm/aaaa) ');
-     readln(f);
-     while not(fecha_valida(f)) do
-     begin
-       writeln('Escriba una fecha valida: ');
-       readln(f);
-     end;
-     r.fecha_nac:=f;
-end;
-
-procedure tiene_disc (var r:t_dato_alumnos);
-var
-   op:char;
-begin
-       writeln('Marque las discapacidades que presenta');
-       writeln('"V" (verdadero)');
-       writeln('"F" (falso)');
-     for i:= 1 to 5 do
-     begin
-       write(discapacidad[i], '; ' );
-       readln(op);
-       while (upcase(op)<>'V') and (upcase(op)<>'F') do
-       begin
-         writeln('Por favor, ingrese solamente "V" o "F": ');
-         readln(op);
-       end;
-       if upcase(op) = 'V' then
-          r.discapacidades[i]:=true
-       else
-           r.discapacidades[i]:=false;
-     end;
-end;
-
-procedure alta_alumnos (var a:t_archivo_alumnos);
-var
-   r:t_dato_alumnos;
+   legajo: string;
+   existe, baja: boolean;
+   opcion: byte;
    pos:byte;
 begin
-     cargar_legajo(r);
-     cargar_ayn(r);
-     fecha_nac(r);
-     tiene_disc(r);
-     r.estado:=true;
-     pos:=filesize(a);
-     seek(a,pos);
-     write(a,r);
+   while opcion <> 0 do
+   begin
+      clrscr;
+      textcolor(white);
+      gotoxy(40,10);
+      write('*Menu ');
+      textcolor(blue);
+      writeln('Alumnos*');
+      textcolor(white);
+      gotoxy(30,12);
+      write('Ingrese un legajo (0 para volver): ');
+      readln(legajo);
+
+      if legajo_valido(legajo) and (legajo= 0) then
+         opcion := 0
+      else
+      begin
+         buscar_legajo(a, legajo, existe, baja, pos); 
+
+         if not existe then
+         begin
+            gotoxy(30,14);
+            writeln('Legajo no encontrado.');
+            writeln('¿Desea dar de alta este alumno? (1=Si, 0=No): ');
+            readln(opcion);
+            if opcion = 1 then
+            begin
+               clrscr;
+               alta_alumnos(legajo);
+            end;
+         end
+         else if baja then
+         begin
+            gotoxy(30,14);
+            writeln('El alumno está dado de baja.');
+            writeln('¿Desea reactivarlo? (1=Si, 0=No)');
+            readln(opcion);
+            if opcion = 1 then
+            begin
+               clrscr;
+               alta_logica(legajo);
+            end;
+         end
+         else
+         begin
+            gotoxy(30,14);
+            writeln('1- Consultar alumno');
+            gotoxy(30,15);
+            writeln('2- Dar de baja alumno');
+            gotoxy(30,16);
+            writeln('0- Volver');
+            gotoxy(30,18);
+            write('Respuesta: ');
+            readln(opcion);
+            case opcion of
+               1: begin 
+                    clrscr; 
+                    consulta_alumnos(legajo);
+                  end;
+               2: begin 
+                    clrscr; 
+                    baja_alumnos(legajo); 
+                  end;
+            end;
+         end;
+      end;
+   end;
 end;
 
-end. 
+
+procedure menu_seguimiento();
+var
+   opcion: byte;
+begin
+     repeat
+      clrscr;
+      textcolor(white);
+      gotoxy(40,10);
+      write('*Menu ');
+      textcolor(blue);
+      writeln(' Seguimiento*');
+      textcolor(blue);
+      gotoxy(52,12);
+      write('1- ');
+      textcolor(white);
+      writeln('Alta de una evaluacion');
+      gotoxy(52,14);
+      textcolor(blue);
+      write('2- ');
+      textcolor(white);
+      writeln('Modificacion de una evaluacion');
+      gotoxy(52,16);
+      textcolor(blue);
+      write('3- ');
+      textcolor(white);
+      writeln('Consulta de una evaluacion');
+      gotoxy(52,18);
+      textcolor(blue);
+      write('0- ');
+      textcolor(white);
+      writeln('Volver al menu principal');
+      gotoxy(52,20);
+      textcolor(blue);
+      write('Respuesta: ');
+      textcolor(white);
+      readln(opcion);
+      validar_opcion(opcion);
+      case opcion of
+        1:begin
+               clrscr;
+               alta_evaluacion();
+          end;
+        2:begin
+                 clrscr;
+               modificacion_evaluacion();
+          end;
+        3:begin
+               clrscr;
+               consulta_evaluacion();
+          end;
+      end;
+   until opcion=0;
+end;
+
+procedure menu_listados();
+var
+   opcion: byte;
+begin
+     repeat
+      clrscr;
+      textcolor(white);
+      gotoxy(40,10);
+      write('*Menu ');
+      textcolor(blue);
+      writeln(' Listados*');
+      textcolor(blue);
+      gotoxy(52,12);
+      write('1- ');
+      textcolor(white);
+      writeln('Listado de alumnos');
+      gotoxy(52,14);
+      textcolor(blue);
+      write('2- ');
+      textcolor(white);
+      writeln('Listado de evaluaciones');
+      gotoxy(52,16);
+      textcolor(blue);
+      write('3- ');
+      textcolor(white);
+      writeln('Listado por discapaciad');
+      gotoxy(52,18);
+      textcolor(blue);
+      write('0- ');
+      textcolor(white);
+      writeln('Volver al menu principal');
+      gotoxy(52,20);
+      textcolor(blue);
+      write('Respuesta: ');
+      textcolor(white);
+      readln(opcion);
+      validar_opcion(opcion);
+      case opcion of
+        1:begin
+               clrscr;
+               listado_alumnos();
+          end;
+        2:begin
+               clrscr;
+               listado_evaluaciones();
+          end;
+        3:begin
+               clrscr;
+               listado_discapacidad();
+          end;
+      end;
+   until opcion=0;
+end;
+
+procedure menu_estadisticas();
+var
+   opcion: byte;
+begin
+     repeat
+      clrscr;
+      textcolor(white);
+      gotoxy(40,10);
+      write('*Menu ');
+      textcolor(blue);
+      writeln(' Estadisticas*');
+      textcolor(blue);
+      gotoxy(52,12);
+      write('1- ');
+      textcolor(white);
+      writeln('Distribucion de evaluaciones por discapaciad');
+      gotoxy(52,14);
+      textcolor(blue);
+      write('2- ');
+      textcolor(white);
+      writeln('Discapaciades con mayor grado de dificultad');
+      gotoxy(52,16);
+      textcolor(blue);
+      write('3- ');
+      textcolor(white);
+      writeln('Discapaciades con mayor numero de alumnos');
+      gotoxy(52,18);
+      textcolor(blue);
+      write('0- ');
+      textcolor(white);
+      writeln('Volver al menu principal');
+      gotoxy(52,20);
+      textcolor(blue);
+      write('Respuesta: ');
+      textcolor(white);
+      readln(opcion);
+      validar_opcion(opcion);
+      case opcion of
+        1:begin
+               clrscr;
+               estadisticas_evaluaciones();
+          end;
+        2:begin
+               clrscr;
+               estadisticas_mayordificultad();
+          end;
+        3:begin
+               clrscr;
+               estadisticas_mayoralumnos();
+          end;
+      end;
+   until opcion=0;
+end;
+end;
+end.

@@ -39,7 +39,7 @@ procedure cargar_legajo(var r:t_dato_alumnos);
 procedure cargar_ayn(var r:t_dato_alumnos);
 procedure fecha_nac (var r:t_dato_alumnos);
 procedure tiene_disc (var r:t_dato_alumnos);
-procedure alta_alumnos (var a:t_archivo_alumnos);
+procedure alta_alumnos (var a:t_archivo_alumnos,legajo:integer);
 
 implementation
 
@@ -105,7 +105,7 @@ procedure cargar_legajo(var r:t_dato_alumnos);
 var
    legajo:string[10];
 begin
-     write('Por favor ingrese el legajo: ');
+     {write('Por favor ingrese el legajo: ');}
      readln(legajo);
      while not(legajo_valido(legajo)) do
      begin
@@ -166,12 +166,12 @@ begin
      end;
 end;
 
-procedure alta_alumnos (var a:t_archivo_alumnos);
+procedure alta_alumnos (var a:t_archivo_alumnos, legajo:string);
 var
    r:t_dato_alumnos;
    pos:byte;
 begin
-     cargar_legajo(r);
+     r.legajo:=legajo;
      cargar_ayn(r);
      fecha_nac(r);
      tiene_disc(r);
@@ -180,5 +180,197 @@ begin
      seek(a,pos);
      write(a,r);
 end;
+
+procedure buscar_legajo(var a:t_archivo_alumnos; legajo: string; var baja: boolean; var pos:byte);
+var
+  r: t_dato_alumnos;
+  encontrado:boolean;
+begin
+  encontrado := false;
+  baja := false;
+  pos=:0;
+  while (not eof(a)) and (encontrado=false) do
+  begin
+    seek(a,pos)
+    read(a, r);
+    if r.legajo = legajo then
+      baja := r.estado
+      encontrado:=true;
+    else
+          pos:=pos+1;
+  end;
+  if not encontrado then
+    pos := -1;
+end;
+
+procedure baja_alumnos (var a:t_archivo_alumnos; legajo:string);
+var
+r:t_dato_alumnos;
+begin
+
+     r.estado := false;
+end;  
+
+procedure baja_alumnos (var a:t_archivo_alumnos; legajo:string);
+var
+  r: t_dato_alumnos;
+  pos: integer;
+  encontrado: boolean;
+begin
+  encontrado := false;
+  pos := 0;
+  while (not eof(a)) and (not encontrado) do
+  begin
+    seek(a,pos);
+    read(a, r);
+    if r.legajo = legajo then
+      encontrado := true
+    else
+      pos := pos + 1;
+  end;
+  if encontrado then
+  begin
+    r.estado := false; 
+    seek(a, pos);
+    write(a, r); 
+  end;
+end;
+
+procedure alta_logica (var a:t_archivo_alumnos; legajo:string);
+var
+  r: t_dato_alumnos;
+  pos: integer;
+  encontrado: boolean;
+begin
+  encontrado := false;
+  pos := 0;
+  while (not eof(a)) and (not encontrado) do
+  begin
+    seek(a,pos);
+    read(a, r);
+    if r.legajo = legajo then
+      encontrado := true
+    else
+      pos := pos + 1;
+  end;
+  if encontrado then
+  begin
+    r.estado := true; 
+    seek(a, pos);
+    write(a, r); 
+  end;
+end;
+
+procedure consulta_alumnos (var a:t_dato_alumnos; legajo:string; pos:byte; var r:t_dato_alumnos; );
+var
+     i:byte;
+begin
+     seek(a,pos)
+     read(a,r)
+     gotoxy(3, 2); 
+     writeln('Legajo: ', r.legajo);
+     gotoxy(3, 4); 
+     writeln('Apellido y Nombre: ', r.ayn);
+     gotoxy(3, 6); 
+     writeln('Fecha de Nacimiento: ', r.fecha_nac);
+     gotoxy(3, 8); 
+     if r.estado then
+          writeln('Estado: Activo')
+     else
+          writeln('Estado: Baja');
+
+     gotoxy(10, 10); 
+     writeln('Discapacidades:');
+     for i := 1 to 5 do
+     begin
+     gotoxy(12, 10 + i);
+     if r.discapacidades[i] then
+          writeln('-', DISCAPACIDADES[i]);
+     end;
+     writeln('Desea modificar alguna informacion ?')
+     writeln ('1-Si | 0-No')
+     readln(op);
+     repeat
+     case op of 
+     1:
+     begin
+     modificar_alumno(a, pos, r);
+     end;
+     until op = 0;
+  end;
+
+procedure modificar_alumno (var a:t_archivo_alumnos; pos:byte; var r:t_dato_alumnos;);
+var
+     op, i:byte;
+     fecha:string[10];
+     ayn:string[50];
+begin
+     repeat
+     gotoxy(15, 6); 
+     writeln(¿Que desea modificar?);
+     gotoxy(15, 8); 
+     writeln('1- Apellido y Nombre:');
+     gotoxy(15, 10); 
+     writeln('2- Fecha de Nacimiento: ');
+     gotoxy(15, 12); 
+     writeln('3- Discapacidades: ');
+     writeln('0- Salir');
+     read(op);
+     case op of
+          1:begin
+               clrscr;
+               writeln('Modificar apellido y nombre: ');
+               readln(ayn);
+               while not(escadena(ayn)) do
+               begin
+                    writeln('ingrese un nombre valido');
+                    readln(ayn);
+               end;
+               r.ayn:=ayn;
+            end;
+          2:begin
+               clrscr;
+               writeln('Modificar fecha de nacimiento: ');
+               readln(fecha);
+               while not(fecha_valida(fecha)) do
+               begin
+                    writeln('ingrese una fecha valida');
+                    readln(fecha);
+               end;
+               r.fecha:=fecha;
+            end;
+          3:begin
+               clrscr;
+               writeln('Modificar discapacidades:');
+               for i := 1 to 5 do
+               begin
+                    write(DISCAPACIDADES[i], ' (V/F): ');
+                    readln(disc);
+                    if upcase(disc)='V' then 
+                         r.discapacidades[i] :=true;
+                    else
+                         r.discapacidades[i] :=false;
+            end;
+     end;
+     until op=0;
+     seek(a,pos);
+     write(a,r);
+     writeln('Datos modificados correctamente.');
+     readkey;
+
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 end. 
