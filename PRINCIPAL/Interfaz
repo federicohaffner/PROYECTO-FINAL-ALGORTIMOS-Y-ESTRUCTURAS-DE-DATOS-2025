@@ -92,7 +92,7 @@ begin
          opcion := 0
       else
       begin
-         buscar_legajo(a, legajo, existe, baja, pos); 
+         buscar_legajo(a, legajo, baja, pos); 
 
          if not existe then
          begin
