@@ -24,9 +24,9 @@ type
   t_dato_evaluaciones=record
     legajo:string;
     fecha_ev:string[10];
-    valoracion:array [1..5] of t_dato_valoracion;
+    valoracion:array [1..5] of 0..4;
+    observacion:string[100];
   end;
-  t_dato_valoracion=0..4;
   t_archivo_evaluaciones=file of t_dato_evaluaciones;
 
 procedure crear_abrir (var archivo_1:t_archivo_alumnos);
@@ -101,11 +101,14 @@ begin
      write(archivo_2,dato);
 end;
 
+
+{PARTE ALUMNOS}
+
 procedure cargar_legajo(var r:t_dato_alumnos);
 var
    legajo:string[10];
 begin
-     {write('Por favor ingrese el legajo: ');}
+     write('Por favor ingrese el legajo: ');
      readln(legajo);
      while not(legajo_valido(legajo)) do
      begin
@@ -360,11 +363,85 @@ begin
 
 end;
 
+{PARTE SEGUIMIENTO EVALUACIONES}
+
+
+procedure alta_evaluacion (var a:t_archivo_alumnos;var a1:t_archivo_evaluaciones);
+var
+     legajo:string;
+     pos,i, op:byte;
+     r:t_dato_alumnos;
+     x:t_dato_evaluaciones;
+     baja:boolean;
+     val:0..4;
+     fecha_ev:string[10];
+     observacion:string[100];
+begin
+     cargar_legajo(legajo);
+     buscar_legajo(a,legajo,baja,pos);
+     if r.estado = true then
+     begin
+          seek(a,pos);
+          read(a,r);
+          x.legajo:= legajo;
+          writeln('Ingrese la fecha actual: ');
+          realdn(fecha_ev);
+          if fecha_valida(fecha_ev) then
+          begin
+               for i := 1 to 5 do
+               begin
+                    if r.discapacidades[i]= true then
+                    begin
+                         writeln(DISCAPACIDADES[i]);
+                         writeln('Ingrese la valoracion del dia: ');
+                         readln (val);
+                         x.valoracion[i] := val;
+                    end;
+               end;
+          end;
+          writeln('Ingrese la observacion del dia: ');
+          readln(observacion);
+          x.fecha_ev := fecha_ev;
+          x.observacion:= observacion;
+          seek(a1,filesize(a1));
+          write(a1,x);
+     end
+     else
+     begin
+          if pos=-1 then
+          begin
+               writeln('El legajo ingresado no existe');
+               writeln('¿Desea darlo de alta?     1-Si|0-No);
+               readln(op);
+               case op of
+                    1: begin
+                         alta_alumnos(a,legajo);
+                         alta_evaluacion(a,a1);
+                       end;
+
+                    0: menu_principal;
+               end;
+          end
+          else
+          begin
+               writeln('El legajo ingresado esta dado de baja');
+               writeln('¿Desea darlo de alta?     1-Si|0-No);
+               readln(op);
+               case op of
+                    1:begin 
+                         alta_logica(a,legajo);
+                         alta_evaluacion(a,a1);
+                      end;
+                    0: menu_principal;
+               end;
+          end;
+     end;
+end;
 
 
 
 
-
+end;
 
 
 

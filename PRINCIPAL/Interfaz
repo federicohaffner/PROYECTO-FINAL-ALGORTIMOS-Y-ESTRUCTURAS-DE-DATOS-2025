@@ -71,7 +71,7 @@ end;
 procedure menu_alumno();
 var
    legajo: string;
-   existe, baja: boolean;
+   baja: boolean;
    opcion: byte;
    pos:byte;
 begin
@@ -94,7 +94,7 @@ begin
       begin
          buscar_legajo(a, legajo, baja, pos); 
 
-         if not existe then
+         if pos = -1 then
          begin
             gotoxy(30,14);
             writeln('Legajo no encontrado.');
