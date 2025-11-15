@@ -2,7 +2,7 @@ unit interfaz;
 {$mode ObjFPC}{$H+}
 interface
 uses
-  Classes, SysUtils, crt, archivos, UNIT_ARBOL;
+   Classes, SysUtils, crt, archivos, arboles, alumnos, evaluaciones, validaciones, listados, estadisticas;
 
 procedure menu_principal;
 procedure menu_alumno();
