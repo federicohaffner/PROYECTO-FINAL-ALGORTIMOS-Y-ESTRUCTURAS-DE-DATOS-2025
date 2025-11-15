@@ -23,6 +23,8 @@ FUNCTION ARBOL_LLENO (RAIZ:T_PUNT): BOOLEAN;
 PROCEDURE AGREGAR_ARBOL_EVAL(VAR RAIZ:T_PUNT; X:T_DATO_ARBOL);
 PROCEDURE INORDEN(VAR RAIZ:T_PUNT);
 PROCEDURE PREORDEN(RAIZ:T_PUNT; BUSCADO:String; VAR ENC:BOOLEAN; VAR X:T_DATO_ARBOL);
+procedure suprime(var raiz:t_punt; x:t_dato_arbol);
+function suprime_min(var raiz:t_punt):t_dato_arbol;
 
 implementation
 
@@ -30,7 +32,6 @@ PROCEDURE CREAR_ARBOL (VAR RAIZ:T_PUNT);
 BEGIN
   RAIZ:= NIL;
 END;
-
 
 PROCEDURE AGREGAR (VAR RAIZ:T_PUNT; X:T_DATO_ARBOL);
 BEGIN
@@ -100,6 +101,21 @@ begin
    raiz^.info:= suprime_min (raiz^.sad)
 end;
 
+function suprime_min(var raiz:t_punt):t_dato_arbol;
+var
+   dir:T_PUNT;
+begin
+ if RAIZ^.SAI = nil then
+  begin
+   suprime_min:= raiz^.info;
+   DIR:=RAIZ;
+   raiz:=raiz^.sad;
+   DISPOSE (DIR);
+  end
+  else
+   suprime_min:= suprime_min (raiz^.sai)
+end;            
+
 PROCEDURE PREORDEN(RAIZ:T_PUNT; BUSCADO:String; VAR ENC:BOOLEAN; VAR X:T_DATO_ARBOL);
 BEGIN
   IF (RAIZ = NIL) THEN
@@ -126,6 +142,23 @@ BEGIN
     INORDEN (RAIZ^.SAD);
  end;
 END;
+
+Procedure arbol_en_memoria(var archivo_1:t_archivo_alumnos; var archivo_2:t_archivo_evaluaciones; var raiz, raiz_2, raiz_3:t_punt);
+begin
+   crear_abrir(archivo_1);
+   crear_abrir_2(archivo_2);
+   if not (archivo_vacio(archivo_1)) then
+   genera_arboles_alum(archivo_1,raiz,raiz_2)
+   else
+   begin
+     crear_arbol(raiz);
+     crear_arbol(raiz_2);
+   end;
+   if not (archivo_vacio(archivo_2)) then
+    genera_arbol_eval(archivo_2,raiz_3)
+   else
+    crear_arbol(raiz_3);
+end;
 
 
 END.
