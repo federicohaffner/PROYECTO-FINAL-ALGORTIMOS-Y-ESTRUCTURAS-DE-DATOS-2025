@@ -138,8 +138,35 @@ BEGIN
   BEGIN
     INORDEN (RAIZ^.SAI);
     WRITELN (RAIZ^.INFO.clave);
-    WRITELN (RAIZ^.INFO.pos_arch);
+    {WRITELN (RAIZ^.INFO.pos_arch);}
     INORDEN (RAIZ^.SAD);
+ end;
+END;
+
+PROCEDURE INORDEN_leg(VAR RAIZ:T_PUNT; legajo:string);
+BEGIN
+  IF RAIZ <> NIL THEN
+  BEGIN
+   INORDEN_leg (RAIZ^.SAI, legajo);
+   if legajo=copy(RAIZ^.INFO.clave,longitud(RAIZ^.INFO.clave)+2,length(legajo)) then
+   begin
+      WRITELN (RAIZ^.INFO.clave);
+   end;
+   INORDEN_leg(RAIZ^.SAD, legajo);
+ end;
+END;
+
+PROCEDURE INORDEN_disc(VAR RAIZ:T_PUNT; disc:byte; var arch: t_archivo_alumnos);
+BEGIN
+  IF RAIZ <> NIL THEN
+  BEGIN
+   INORDEN_disc (RAIZ^.SAI, legajo, arch);
+   seek(arch, RAIZ^.INFO.pos_arch);
+   read(arch, dato_alum);
+   if dato_alum.discapacidad[disc]=true then
+      WRITELN (RAIZ^.INFO.clave);
+   end;
+   INORDEN_disc(RAIZ^.SAD, legajo);
  end;
 END;
 
@@ -150,7 +177,7 @@ begin
    if not (archivo_vacio(archivo_1)) then
    genera_arboles_alum(archivo_1,raiz,raiz_2)
    else
-   begin
+   begin 
      crear_arbol(raiz);
      crear_arbol(raiz_2);
    end;
