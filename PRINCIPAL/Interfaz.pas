@@ -305,6 +305,6 @@ begin
           end;
       end;
    until opcion=0;
-end;
+   writeln('Gracias por usar el sistema. ¡Hasta luego!');
 end;
 end.
