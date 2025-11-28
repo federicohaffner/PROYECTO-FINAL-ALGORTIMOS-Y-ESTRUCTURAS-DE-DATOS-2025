@@ -14,7 +14,7 @@ implementation
 
 procedure cargar_valoracion(var r:t_dato_evaluaciones);
 var
-    val:byte;
+    val: byte;
 begin
     writeln('Ingrese la valoracion obtenida');
     readln(val);
@@ -23,26 +23,26 @@ begin
        writeln('Escriba una valoracion valida: ');
        readln(validda);
     end;
-    r.valoracion:=val;
+    r.valoracion := val;
 end;
 
 procedure cargar_fecha(var r:t_dato_evaluaciones);
 var
-    fecha:string;
+    fecha: string;
 begin
-    writeln('Ingrese el dia de la evaluacion');
+    writeln('Ingrese el dia de la evaluacion (AAAA/MM/DD): ');
     readln(fecha);
     while not(fecha_valida(f)) do
     begin
-       writeln('Escriba una fecha valida: ');
+       writeln('Escriba una fecha valida (AAAA/MM/DD): ');
        readln(fecha);
     end;
-    r.fecha_ev:=fecha;
+    r.fecha_ev := fecha;
 end;
 
 procedure cargar_observacion(var r:t_dato_evaluaciones);
 var
-    observacion:string;
+    observacion: string;
 begin
     writeln('Ingrese la observacion');
     readln(observacion);
@@ -51,7 +51,7 @@ end;
 
 procedure cargar_registro (var r:t_dato_evaluaciones, legajo: string);
 begin
-    r.legajo:=legajo;
+    r.legajo := legajo;
     cargar_fecha(r);
     cargar_valoracion(r);
     cargar_observacion(r);
@@ -60,13 +60,13 @@ end;
 procedure agregar_archivo_eval (var a:t_archivo_evaluaciones; legajo:string; pos:integer; var r: t_dato_evaluaciones);
 begin
     cargar_registro(r, legajo);
-    seek(a,pos);
-    write(a,r);
+    seek(a, pos);
+    write(a, r);
 end;
 
 procedure mostrar_registro_ev (x:t_dato_evaluaciones);
 var
-     i:byte;
+    i:byte;
 begin
     writeln('Legajo: ', x.legajo);
     writeln('fecha: ', x.fecha_ev);
@@ -76,26 +76,26 @@ end;
 
 procedure alta_evaluacion (var arb_ev, arb_leg:t_punt; fecha, legajo:string; a:t_archivo_evaluaciones);
 var
-    aux:string;
-    pos:integer;
-    encontrado:boolean;
-    X:t_dato_arbol;
-    dato_ev:t_dato_arbol;
-    op:string;
+    aux: string;
+    pos: integer;
+    encontrado: boolean;
+    X: t_dato_arbol;
+    dato_ev: t_dato_arbol;
+    op: string;
 begin
-    encontrado:=false;
-    pos:=0;
+    encontrado := false;
+    pos := 0;
     Preorden(arb_leg, legajo, encontrado, x);
-    if encontrado=true then
+    if encontrado = true then
     begin
-        aux:=fecha+' '+legajo
+        aux := fecha + ' ' + legajo
         Preorden(arb_ev, aux, encontrado, x);
-        if encontrado=false then
+        if encontrado = false then
         begin
-            pos :=filesize(a);
+            pos := filesize(a);
             agregar_archivo_eval(a, legajo, pos, r);
-            dato_ev.clave:= r.fecha_ev;
-            dato_ev.pos_arch:= pos;
+            dato_ev.clave := r.fecha_ev;
+            dato_ev.pos_arch := pos;
             carga_arbol_eval(arb_ev, dato_ev);
             writeln('Evaluacion agregada con exito');
             readkey;
@@ -115,17 +115,17 @@ end;
 
 procedure consulta_ev (var arb_ev, arb_leg:t_punt; fecha, legajo:string; a:t_archivo_evaluaciones);
 var
-    y:t_dato_evaluaciones;
-    pos:integer;
-    encontrado:boolean;
-    X:t_dato_arbol;
+    y: t_dato_evaluaciones;
+    pos: integer;
+    encontrado: boolean;
+    X: t_dato_arbol;
 begin
-    encontrado:=false;
-    pos:=0;
+    encontrado := false;
+    pos := 0;
     Preorden(arb_leg, legajo, encontrado, x);
-    if encontrado=true then
+    if encontrado = true then
     begin
-        pos:=x.pos_arch;
+        pos := x.pos_arch;
         leer_archivo(a, pos, y);
         mostrar_registro_ev(y);    
     end
@@ -145,20 +145,20 @@ end;
 
 procedure modificar_eval(var a:t_archivo_evaluaciones; var arb_ev:t_punt, arb_leg:t_punt ; legajo:string; fecha:string);
 var
-    y:t_dato_alumnos;
-    x:t_dato_arbol;
-    encontrado:boolean;
-    pos:integer;
-    op:char;
-    aux:string;
+    y: t_dato_alumnos;
+    x: t_dato_arbol;
+    encontrado: boolean;
+    pos: integer;
+    op: char;
+    aux: string;
 begin
     encontrado := false;
-    pos:=0;
-    aux:=fecha+' '+legajo;
+    pos := 0;
+    aux := fecha + ' ' + legajo;
     PREORDEN(arb_ev, aux, encontrado, x);
-    if encontrado=true then
+    if encontrado = true then
     begin
-        pos:=x.pos_arch;
+        pos := x.pos_arch;
         repeat
             clrscr;
             leer_archivo(a, pos, y);
@@ -176,16 +176,16 @@ begin
             case op of
                 1:begin
                     clrscr;
-                    writeln('Modificar fecha de evaluacion: ');
+                    writeln('Modificar fecha de evaluacion (AAAA/MM/DD): ');
                     readln(fecha);
                     while not(fecha_valida(fecha)) do
                     begin
-                        writeln('ingrese una fecha valida');
+                        writeln('ingrese una fecha valida (AAAA/MM/DD)');
                         readln(fecha);
                     end;
-                    y.fecha:=fecha;
+                    y.fecha := fecha;
                     suprime(arb_ayn, x);
-                    x.clave:=fecha+' '+legajo;
+                    x.clave := fecha + ' ' + legajo;
                     carga_arbol_eval(arb_ayn, x);
                     end;
                 2:begin
@@ -197,18 +197,18 @@ begin
                         writeln('ingrese una valoracion valida');
                         readln(valoracion);
                     end;
-                    y.valoracion:=valoracion;
+                    y.valoracion := valoracion;
                 end;
                 3:begin
                     clrscr;
                     writeln('Modificar observaciones:');
                     readln(observacion);
-                    y.observacion:=observacion;
+                    y.observacion := observacion;
                 end;
             end;
-        until op=0;
-        seek(a,pos);
-        write(a,y);
+        until op = 0;
+        seek(a, pos);
+        write(a, y);
         writeln('Datos modificados correctamente.');
         readkey;
     end;
@@ -216,23 +216,23 @@ end;
 
 procedure genera_arbol_eval(var a:t_arch_eval; var raiz:t_punt);
 var
-   x:t_dato_eval;
-   i,j:byte;
+   x: t_dato_eval;
+   i,j: byte;
 begin
   crear_arbol(raiz);
-  j:=filesize(a);
-  if j<>0 then
+  j := filesize(a);
+  if j <> 0 then
   begin
-    for i:=0 to j-1 do
+    for i := 0 to j - 1 do
     begin
-        seek(a,i);
-        read(a,x);
-        carga_arbol_eval(raiz,(x.fecha_ev+' '+x.legajo),i);
+        seek(a, i);
+        read(a, x);
+        carga_arbol_eval(raiz, (x.fecha_ev + ' ' + x.legajo), i);
     end;
   end;
 end; 
 
 procedure carga_arbol_eval(VAR raiz:t_punt; X:t_dato_arbol);
 begin
-  agregar_arbol_eval(raiz,x);
+  agregar_arbol_eval(raiz, x);
 end;

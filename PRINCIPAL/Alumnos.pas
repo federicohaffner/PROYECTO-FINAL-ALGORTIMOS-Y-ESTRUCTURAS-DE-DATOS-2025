@@ -21,7 +21,7 @@ implementation
 
 procedure cargar_legajo(var r:t_dato_alumnos);
 var
-   legajo:string[10];
+   legajo: string[10];
 begin
      write('Por favor ingrese el legajo: ');
      readln(legajo);
@@ -30,12 +30,12 @@ begin
        writeln('Escriba un legajo valido');
        readln(legajo);
      end;
-     r.legajo:=legajo;
+     r.legajo := legajo;
 end;
 
 procedure cargar_ayn(var r:t_dato_alumnos);
 var
-   ayn:string;
+   ayn: string;
 begin
      write('Por favor ingrese el apellido y nombre: ');
      readln(ayn);
@@ -44,12 +44,12 @@ begin
           writeln('Escriba un apellido y nombre valido: ');
           readln(ayn);
      end;
-     r.ayn:=ayn;
+     r.ayn := ayn;
 end;
 
 procedure fecha_nac (var r:t_dato_alumnos);
 var
-   f:string[10];
+   f: string[10];
 begin
      writeln('Por favor ingrese la fecha de nacimiento: (dd/mm/aaaa) ');
      readln(f);
@@ -58,12 +58,12 @@ begin
        writeln('Escriba una fecha valida: ');
        readln(f);
      end;
-     r.fecha_nac:=f;
+     r.fecha_nac := f;
 end;
 
 procedure tiene_disc (var r:t_dato_alumnos);
 var
-   op:char;
+   op: char;
 begin
        writeln('Marque las discapacidades que presenta');
        writeln('"V" (verdadero)');
@@ -72,21 +72,21 @@ begin
      begin
        write(discapacidad[i], '; ' );
        readln(op);
-       while (upcase(op)<>'V') and (upcase(op)<>'F') do
+       while (upcase(op) <> 'V') and (upcase(op) <> 'F') do
        begin
          writeln('Por favor, ingrese solamente "V" o "F": ');
          readln(op);
        end;
        if upcase(op) = 'V' then
-          r.discapacidades[i]:=true
+          r.discapacidades[i] := true
        else
-           r.discapacidades[i]:=false;
+           r.discapacidades[i] := false;
      end;
 end;
 
 procedure mostrar_registro_al (x:t_dato_alumnos);
 var
-     i:byte;
+     i: byte;
 begin
      writeln('Legajo: ', x.legajo);
      writeln('Apellido y Nombre: ', x.ayn);
@@ -108,32 +108,32 @@ end;
 
 procedure cargar_registro (var r:t_dato_alumnos, legajo: string);
 begin
-     r.legajo:=legajo;
+     r.legajo := legajo;
      cargar_ayn(r);
      fecha_nac(r);
      tiene_disc(r);
-     r.estado:=true;
+     r.estado := true;
 end;
 
 procedure agregar_archivo_alumno (var a:t_archivo_alumnos; legajo:string; pos:integer; var r: t_dato_alumnos);
 begin
      cargar_registro(r, legajo);
-     seek(a,pos);
-     write(a,r);
+     seek(a, pos);
+     write(a, r);
 end;
 
 procedure alta_alumnos (var a: t_archivo_alumnos; legajo: string; var arb_leg:t_punt, arb_ayn: t_punt);
 var
-     pos:integer;
-     dato_ayn,x,dato_leg:t_dato_arbol;
-     r:t_dato_alumnos;
+     pos: integer;
+     dato_ayn,x,dato_leg: t_dato_arbol;
+     r: t_dato_alumnos;
      encontrado: boolean;
-     op:char;
+     op: char;
 begin
      encontrado := false;
-     pos:=0;
+     pos := 0;
      PREORDEN(arb_leg, legajo, encontrado, x);
-     if encontrado=false then
+     if encontrado = false then
      begin
           pos:=filesize(a);
           agregar_archivo_alumno(a, legajo, pos, r);
@@ -144,11 +144,11 @@ begin
 
           dato_ayn.clave := r.ayn;
           dato_ayn.pos_arch := pos;
-          carga_arbol_alum(arb_ayn ,dato_ayn);
+          carga_arbol_alum(arb_ayn, dato_ayn);
      end
      else
      begin
-          pos:=x.pos_arch
+          pos := x.pos_arch
           leer_archivo(a, pos, r);
           mostrar_registro(r);
           if y.estado = true then
@@ -161,29 +161,29 @@ begin
                if upcase(op)='S'  then
                begin
                     clrscr;
-                    y.estado:=true
-                    escribir_archivo(a,pos,y);
+                    y.estado := true
+                    escribir_archivo(a, pos, y);
                     writeln('Alumno agregado con exito');
                end;
           end;       
      end;
 end;
 
-procedure buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
+procedure buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt; legajo:string);
 var
-y:t_dato_alumnos;
-x:t_dato_arbol;
-encontrado:boolean;
-pos:integer;
-op:char;
+y: t_dato_alumnos;
+x: t_dato_arbol;
+encontrado: boolean;
+pos: integer;
+op: char;
 begin
      encontrado := false;
-     pos=:0;
+     pos := 0;
      PREORDEN(arb_leg, legajo, encontrado, x);
-     if encontrado=true then
+     if encontrado = true then
      begin
-          pos:=x.pos_arch
-          leer_archivo(a, pos,y);
+          pos := x.pos_arch
+          leer_archivo(a, pos, y);
           mostrar_registro(y);
      end
      else
@@ -191,7 +191,7 @@ begin
           writeln('Alumno no encontrado');
           writeln('¿Desea agregarlo? S/N ');
           readln(op);
-          if upcase(op)='S'  then
+          if upcase(op) = 'S'  then
           begin
                clrscr;
                alta_alumnos(a, legajo, arb_leg, arb_ayn);
@@ -202,23 +202,23 @@ end;
 
 procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 var
-     y:t_dato_alumnos;
-     x:t_dato_arbol
-     encontrado:boolean;
-     pos:integer;
-     op:char;
+     y: t_dato_alumnos;
+     x: t_dato_arbol
+     encontrado: boolean;
+     pos: integer;
+     op: char;
 begin
      encontrado := false;
-     pos=:0;
+     pos := 0;
      PREORDEN(arb_leg, legajo, encontrado, x);
-     if encontrado=true then
+     if encontrado = true then
      begin
-          pos:=x.pos_arch
+          pos := x.pos_arch
           leer_archivo(a, pos, y);
           if y.estado = true then
           begin
-               y.estado:=false;
-               escribir_archivo(a,pos,y);
+               y.estado := false;
+               escribir_archivo(a, pos, y);
                writeln('Alumno dado de baja con exito');
           end
           else
@@ -230,18 +230,18 @@ end;
 
 procedure consulta_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 var
-     y:t_dato_alumnos;
-     x:t_dato_arbol
-     encontrado:boolean;
-     pos:integer;
-     op:char;
+     y: t_dato_alumnos;
+     x: t_dato_arbol
+     encontrado: boolean;
+     pos: integer;
+     op: char;
 begin
      encontrado := false;
-     pos=:0;
+     pos := 0;
      PREORDEN(arb_leg, legajo, encontrado, x);
-     if encontrado=true then
+     if encontrado = true then
      begin
-          pos:=x.pos_arch
+          pos := x.pos_arch
           leer_archivo(a, pos, y);
           mostrar_registro(y);
      end
@@ -261,18 +261,18 @@ end;
 
 procedure modificar_alumno(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 var
-     y:t_dato_alumnos;
-     x:t_dato_arbol
-     encontrado:boolean;
-     pos:integer;
-     op:char;
+     y: t_dato_alumnos;
+     x: t_dato_arbol
+     encontrado: boolean;
+     pos: integer;
+     op: char;
 begin
      encontrado := false;
-     pos=:0;
+     pos := 0;
      PREORDEN(arb_leg, legajo, encontrado, x);
-     if encontrado=true then
+     if encontrado = true then
      begin
-          pos:=x.pos_arch
+          pos := x.pos_arch
           repeat
                clrscr;
                leer_archivo(a, pos, y);
@@ -297,9 +297,9 @@ begin
                               writeln('ingrese un nombre valido');
                               readln(ayn);
                          end;
-                         y.ayn:=ayn;
+                         y.ayn := ayn;
                          suprime(arb_ayn, x);
-                         x.clave:=ayn;
+                         x.clave := ayn;
                          carga_arbol_alum(arb_ayn, x);
                     end;
                     2:begin
@@ -311,7 +311,7 @@ begin
                               writeln('ingrese una fecha valida');
                               readln(fecha);
                          end;
-                         y.fecha:=fecha;
+                         y.fecha := fecha;
                     end;
                     3:begin
                          clrscr;
@@ -321,41 +321,41 @@ begin
                               write(DISCAPACIDADES[i], ' (V/F): ');
                               readln(disc);
                               if upcase(disc)='V' then 
-                                   y.discapacidades[i] :=true;
+                                   y.discapacidades[i] := true;
                               else
-                                   y.discapacidades[i] :=false;
+                                   y.discapacidades[i] := false;
                          end;
                     end;
                end;
           end;
           until op=0;
-          seek(a,pos);
-          write(a,y);
+          seek(a, pos);
+          write(a, y);
           writeln('Datos modificados correctamente.');
           readkey;
 end;
 
 procedure genera_arboles_alum(var a:t_archivo_alumos; var raiz, raiz_2:t_punt);
 var
-   x:t_dato_alumnos;
-   i,j:byte;
+   x: t_dato_alumnos;
+   i,j: byte;
 begin
   crear_arbol(raiz);
   crear_arbol(raiz_2);
   j:=filesize(a);
-  if j<>0 then
+  if j <> 0 then
   begin
-    for i:=0 to j-1 do
+    for i := 0 to j - 1 do
     begin
-      seek(a,i);
-      read(a,x);
-      carga_arbol_alum(raiz,x.num_legajo,i);
-      carga_arbol_alum(raiz_2,x.ayn,i);
+      seek(a, i);
+      read(a, x);
+      carga_arbol_alum(raiz,x.num_legajo, i);
+      carga_arbol_alum(raiz_2, x.ayn,i);
     end;
   end;
 end;
 
 procedure carga_arbol_alum(VAR raiz:t_punt; X:t_dato_arbol);
 begin
-  agregar(raiz,x);
+  agregar(raiz, x);
 end;  
