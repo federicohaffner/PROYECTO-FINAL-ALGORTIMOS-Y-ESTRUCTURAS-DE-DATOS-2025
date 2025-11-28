@@ -2,15 +2,19 @@ unit estadisticas;
 {$mode ObjFPC}{$H+}
 interface
 uses
-    Classes, SysUtils, crt;
+    Classes, SysUtils, archivos, unit_arbol;
 
 procedure calcular_evaluaciones_por_discapacidad(var arb_ev: t_punt; var a:t_archivo_alumnos; arb_leg:t_punt; var contadores: array of integer; fecha_final, fecha_inicio: string); 
 procedure mostrar_evaluaciones_por_discapacidad(var a:t_archivo_alumnos; var arb_ev, arb_leg:t_punt);
 procedure discapacidades_mayor_dificultad(var e:t_archivo_evaluaciones; arb_ev:t_punt);
 procedure burbuja(var vector_cadenas: array of string; var vector_enteros: array of integer);
 procedure calcular_grados(arb_ev:t_punt; var e:t_archivo_evaluaciones; var puntos_dificultad: array of integer; fecha_inicio, fecha_final: string);
+procedure alumno_activos_por_dificultad(var a:t_archivo_alumnos);
+procedure cargar_periodo(var fecha_inicio, fecha_final: string);
 
 implementation
+
+uses crt, validaciones;
 
 procedure cargar_periodo(var fecha_inicio, fecha_final: string);
 begin

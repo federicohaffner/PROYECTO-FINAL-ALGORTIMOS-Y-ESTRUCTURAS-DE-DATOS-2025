@@ -142,7 +142,7 @@ begin
    begin
       inorden (raiz^.sai);
       writeln (raiz^.info.clave);
-      writeln (raiz^.info.pos_arch);
+      {writeln (raiz^.info.pos_arch);}
       inorden (raiz^.sad);
    end;
 end;

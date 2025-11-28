@@ -2,22 +2,26 @@ unit interfaz;
 {$mode ObjFPC}{$H+}
 interface
 uses
-   Classes, SysUtils, crt, archivos, arboles, alumnos, evaluaciones, validaciones, listados, estadisticas;
+   Classes, SysUtils, crt, archivos, unit_arbol, alumnos, evaluaciones, validaciones, listados, estadisticas;
 
 procedure menu_principal;
-procedure menu_alumno();
-procedure menu_seguimiento();
-procedure menu_listados();
-procedure menu_estadisticas();
+procedure menu_alumno( var a:t_archivo_alumnos; var arb_leg:t_punt; var arb_ayn:t_punt );
+procedure menu_seguimiento( var e:t_archivo_evaluaciones; var arb_ev, arb_leg:t_punt);
+procedure menu_listados( var a:t_archivo_alumnos; var arb_ayn:t_punt; var arb_ev:t_punt );
+procedure menu_estadisticas( var a:t_archivo_alumnos; var e:t_archivo_evaluaciones; var arb_ev, arb_leg:t_punt);
 
 implementation
 
 procedure menu_principal;
 var
    opcion: byte;
+   a: t_archivo_alumnos;
+   e: t_archivo_evaluaciones;
+   arb_leg: t_punt;
+   arb_ayn: t_punt;
+   arb_ev: t_punt;
 begin
-   crear_abrir(arch_alumnos);
-   crear_abrir(arch_evaluaciones);
+   arbol_en_memoria(a, e, arb_leg, arb_ayn, arb_ev);
    repeat
       clrscr;
       textcolor(white);
@@ -68,12 +72,13 @@ begin
 end;
 
 
-procedure menu_alumno();
+procedure menu_alumno( var a:t_archivo_alumnos; var arb_leg:t_punt; var arb_ayn:t_punt );
 var
    legajo: string;
    baja: boolean;
    opcion: byte;
    pos:byte;
+   fecha:string;
 begin
    while opcion <> 0 do
    begin
@@ -87,67 +92,51 @@ begin
       gotoxy(30,12);
       write('Ingrese un legajo (0 para volver): ');
       readln(legajo);
-
-      if legajo_valido(legajo) and (legajo= 0) then
-         opcion := 0
+      if  legajo = 0 then
+         opcion := 0;
+      while not(legajo_valido(legajo)) do
+      begin
+         clrscr;
+         gotoxy(30,12);
+         write('Ingrese un legajo valido (0 para volver): ');
+         readln(legajo);
+         if  legajo = 0 then
+            opcion := 0;
+      end;
+      if buscar_legajo(a, legajo, arb_leg, arb_ayn) then
+      begin
+         gotoxy(30,14);
+         writeln('1- Consultar alumno');
+         gotoxy(30,15);
+         writeln('2- Dar de baja alumno');
+         gotoxy(30,16);
+         writeln('3- Modificar alumno');
+         gotoxy(30,18);
+         write('0- Volver al menu anterior');
+         readln(opcion);
+         case opcion of
+            1: begin 
+                  clrscr; 
+                  consulta_alumnos(a, arb_leg, arb_ayn, legajo);
+               end;
+            2: begin 
+                  clrscr; 
+                  baja_alumnos(a, arb_leg, arb_ayn, legajo); 
+               end;
+         end;
+      end
       else
       begin
-         buscar_legajo(a, legajo, baja, pos); 
-
-         if pos = -1 then
-         begin
-            gotoxy(30,14);
-            writeln('Legajo no encontrado.');
-            writeln('¿Desea dar de alta este alumno? (1=Si, 0=No): ');
-            readln(opcion);
-            if opcion = 1 then
-            begin
-               clrscr;
-               alta_alumnos(legajo);
-            end;
-         end
-         else if baja then
-         begin
-            gotoxy(30,14);
-            writeln('El alumno está dado de baja.');
-            writeln('¿Desea reactivarlo? (1=Si, 0=No)');
-            readln(opcion);
-            if opcion = 1 then
-            begin
-               clrscr;
-               alta_logica(legajo);
-            end;
-         end
-         else
-         begin
-            gotoxy(30,14);
-            writeln('1- Consultar alumno');
-            gotoxy(30,15);
-            writeln('2- Dar de baja alumno');
-            gotoxy(30,16);
-            writeln('0- Volver');
-            gotoxy(30,18);
-            write('Respuesta: ');
-            readln(opcion);
-            case opcion of
-               1: begin 
-                    clrscr; 
-                    consulta_alumnos(legajo);
-                  end;
-               2: begin 
-                    clrscr; 
-                    baja_alumnos(legajo); 
-                  end;
-            end;
-         end;
+         alta_alumnos(a, legajo, arb_leg, arb_ayn);
       end;
    end;
 end;
 
-
-procedure menu_seguimiento();
+procedure menu_seguimiento( var e:t_archivo_evaluaciones; var arb_ev, arb_leg:t_punt);
 var
    opcion: byte;
+   fecha: string;
+   legajo: string;
 begin
      repeat
       clrscr;
@@ -181,27 +170,34 @@ begin
       write('Respuesta: ');
       textcolor(white);
       readln(opcion);
-      validar_opcion(opcion);
       case opcion of
         1:begin
                clrscr;
-               alta_evaluacion();
+               cargar_fecha(r);
+               cargar_legajo(legajo);
+               alta_evaluacion(arb_ev, arb_leg, fecha, legajo, e );
           end;
         2:begin
-                 clrscr;
-               modificacion_evaluacion();
+               clrscr;
+               cargar_fecha(r);
+               cargar_legajo(legajo);
+               modificacion_evaluacion(e, arb_ev, arb_leg, legajo, fecha);
           end;
         3:begin
                clrscr;
-               consulta_evaluacion();
+               cargar_fecha(r);
+               cargar_legajo(legajo);
+               consulta_evaluacion(arb_ev, arb_leg, fecha, legajo, e);
           end;
       end;
    until opcion=0;
 end;
 
-procedure menu_listados();
+procedure menu_listados( var a:t_archivo_alumnos; var arb_ayn:t_punt; var arb_ev:t_punt );
 var
    opcion: byte;
+   legajo: string;
+   disc: byte;
 begin
      repeat
       clrscr;
@@ -235,25 +231,26 @@ begin
       write('Respuesta: ');
       textcolor(white);
       readln(opcion);
-      validar_opcion(opcion);
       case opcion of
         1:begin
                clrscr;
-               listado_alumnos();
+               listado_alumnos(arb_ayn);
           end;
         2:begin
                clrscr;
-               listado_evaluaciones();
+               cargar_legajo(legajo);
+               listado_ev(arb_ev, legajo);
           end;
         3:begin
                clrscr;
-               listado_discapacidad();
+               cargar_discapacidad(disc);
+               listado_discapacidad(arb_ayn, disc, a);
           end;
       end;
    until opcion=0;
 end;
 
-procedure menu_estadisticas();
+procedure menu_estadisticas(var a:t_archivo_alumnos; var e:t_archivo_evaluaciones; var arb_ev, arb_leg:t_punt);
 var
    opcion: byte;
 begin
@@ -289,19 +286,18 @@ begin
       write('Respuesta: ');
       textcolor(white);
       readln(opcion);
-      validar_opcion(opcion);
       case opcion of
         1:begin
                clrscr;
-               estadisticas_evaluaciones();
+               mostrar_evaluaciones_por_discapacidad(a, arb_ev, arb_leg);
           end;
         2:begin
                clrscr;
-               estadisticas_mayordificultad();
+               discapacidades_mayor_dificultad(e, arb_ev);
           end;
         3:begin
                clrscr;
-               estadisticas_mayoralumnos();
+               alumno_activos_por_dificultad(a);
           end;
       end;
    until opcion=0;

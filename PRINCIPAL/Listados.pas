@@ -3,7 +3,7 @@ unit listados;
 interface
     
 uses
-    crt,SysUtils, Classes, UNIT_ARBOL, archivos, Validaciones;
+    crt, SysUtils, Classes, unit_arbol, archivos, validaciones;
 
 procedure listado_alumnos(arb_ayn:t_punt);
 procedure listado_ev (arb_ev:t_punt; legajo:string);

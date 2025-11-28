@@ -10,7 +10,7 @@ const
                                              'MEMORIA Y OTRAS DIFICULTADES DEL PENSAMIENTO',
                                              'DESTREZAS SOCIALES INADECUADAS');
 uses
-  Classes, SysUtils, UNIT_ARBOL;
+  Classes, SysUtils, unit_arbol, validaciones, crt;
 type
   t_dato_alumnos= record
     legajo: string[10];

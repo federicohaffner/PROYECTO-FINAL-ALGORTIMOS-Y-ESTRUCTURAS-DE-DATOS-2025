@@ -2,15 +2,23 @@ unit evaluaciones;
 {$mode ObjFPC}{$H+} 
 interface      
 uses
-   Classes, SysUtils, crt, archivos, arboles, validaciones, alumnos;
+    Classes, SysUtils, archivos, unit_arbol, validaciones;
 
 procedure alta_evaluacion (var arb_ev, arb_leg:t_punt; fecha, legajo:string; a:t_archivo_evaluaciones);
 procedure consulta_ev (var arb_ev, arb_leg:t_punt; fecha, legajo:string; a:t_archivo_evaluaciones);
 procedure modificar_eval(var a:t_archivo_evaluaciones ; var arb_ev:t_punt, arb_leg:t_punt ; legajo:string; fecha:string);       
 procedure genera_arbol_eval(var a:t_archivo_evaluaciones; var raiz:t_punt);
 procedure carga_arbol_eval(VAR raiz:t_punt; X:t_dato_arbol);
+procedure cargar_registro (var r:t_dato_evaluaciones, legajo: string);
+procedure agregar_archivo_eval (var a:t_archivo_evaluaciones; legajo:string; pos:integer; var r: t_dato_evaluaciones);
+procedure mostrar_registro_ev (x:t_dato_evaluaciones);
+procedure cargar_valoracion(var r:t_dato_evaluaciones);
+procedure cargar_fecha(var r:t_dato_evaluaciones);
+procedure cargar_observacion(var r:t_dato_evaluaciones);
 
 implementation
+
+uses crt, alumnos;
 
 procedure cargar_valoracion(var r:t_dato_evaluaciones);
 var
@@ -74,7 +82,7 @@ begin
     write('Observaciones: ', x.observacion);
 end;
 
-procedure alta_evaluacion (var arb_ev, arb_leg:t_punt; fecha, legajo:string; a:t_archivo_evaluaciones);
+procedure alta_evaluacion (var arb_ev, arb_leg:t_punt; fecha: string, legajo:string; e:t_archivo_evaluaciones);
 var
     aux: string;
     pos: integer;
@@ -82,6 +90,8 @@ var
     X: t_dato_arbol;
     dato_ev: t_dato_arbol;
     op: string;
+    r: t_dato_evaluaciones;
+    a: t_archivo_alumnos;
 begin
     encontrado := false;
     pos := 0;
@@ -92,8 +102,8 @@ begin
         Preorden(arb_ev, aux, encontrado, x);
         if encontrado = false then
         begin
-            pos := filesize(a);
-            agregar_archivo_eval(a, legajo, pos, r);
+            pos := filesize(e);
+            agregar_archivo_eval(e, legajo, pos, r);
             dato_ev.clave := r.fecha_ev;
             dato_ev.pos_arch := pos;
             carga_arbol_eval(arb_ev, dato_ev);
@@ -113,7 +123,7 @@ begin
     end;
 end;
 
-procedure consulta_ev (var arb_ev, arb_leg:t_punt; fecha, legajo:string; a:t_archivo_evaluaciones);
+procedure consulta_ev (var arb_ev, arb_leg:t_punt; fecha: string, legajo:string; e:t_archivo_evaluaciones);
 var
     y: t_dato_evaluaciones;
     pos: integer;
@@ -126,7 +136,7 @@ begin
     if encontrado = true then
     begin
         pos := x.pos_arch;
-        leer_archivo(a, pos, y);
+        leer_archivo(e, pos, y);
         mostrar_registro_ev(y);    
     end
     else
@@ -137,13 +147,12 @@ begin
         if upcase(op)='S'  then
         begin
             clrscr;
-            alta_alumnos(a, legajo, arb_leg, arb_ayn);
-            writeln('Alumno agregado con exito');
+            alta_alumnos(e, legajo, arb_leg, arb_ayn);
         end;
     end;
 end;
 
-procedure modificar_eval(var a:t_archivo_evaluaciones; var arb_ev:t_punt, arb_leg:t_punt ; legajo:string; fecha:string);
+procedure modificar_eval(var e:t_archivo_evaluaciones; var arb_ev:t_punt, arb_leg:t_punt ; legajo:string; fecha:string);
 var
     y: t_dato_alumnos;
     x: t_dato_arbol;
@@ -207,11 +216,20 @@ begin
                 end;
             end;
         until op = 0;
-        seek(a, pos);
-        write(a, y);
+        seek(e, pos);
+        write(e, y);
         writeln('Datos modificados correctamente.');
         readkey;
-    end;
+    end
+    else    
+        writeln('Evaluacion no encontrada.');
+        writeln('¿Desea dar de alta la evaluacion? S/N ');
+        readln(op);
+        if upcase(op)='S'  then
+        begin
+            clrscr;
+            alta_evaluacion(arb_ev, arb_leg, fecha, legajo, e);
+        end;
 end;
 
 procedure genera_arbol_eval(var a:t_arch_eval; var raiz:t_punt);

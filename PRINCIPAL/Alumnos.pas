@@ -3,7 +3,7 @@ unit alumnos;
 interface
 const
 uses
-  Classes, SysUtils, archivos, arboles;
+     Classes, SysUtils, archivos, unit_arbol, validaciones;
 
 procedure cargar_legajo(var r:t_dato_alumnos); 
 procedure cargar_ayn(var r:t_dato_alumnos); 
@@ -16,8 +16,13 @@ procedure cargar_registro (var r:t_dato_alumnos, legajo: string);
 procedure buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string); 
 procedure consulta_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string); 
 procedure modificar_alumno(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
+procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
+procedure genera_arboles_alum(var a:t_archivo_alumos; var raiz, raiz_2:t_punt);
+procedure carga_arbol_alum(VAR raiz:t_punt; X:t_dato_arbol);
 
 implementation
+
+uses crt;
 
 procedure cargar_legajo(var r:t_dato_alumnos);
 var
@@ -169,14 +174,15 @@ begin
      end;
 end;
 
-procedure buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt; legajo:string);
+function buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt; legajo:string):boolean
 var
-y: t_dato_alumnos;
-x: t_dato_arbol;
-encontrado: boolean;
-pos: integer;
-op: char;
+     y: t_dato_alumnos;
+     x: t_dato_arbol;
+     encontrado: boolean;
+     pos: integer;
+     op: char;
 begin
+     buscar_legajo := false;
      encontrado := false;
      pos := 0;
      PREORDEN(arb_leg, legajo, encontrado, x);
@@ -184,18 +190,10 @@ begin
      begin
           pos := x.pos_arch
           leer_archivo(a, pos, y);
-          mostrar_registro(y);
-     end
-     else
-     begin
-          writeln('Alumno no encontrado');
-          writeln('¿Desea agregarlo? S/N ');
-          readln(op);
-          if upcase(op) = 'S'  then
+          if y.estado then
           begin
-               clrscr;
-               alta_alumnos(a, legajo, arb_leg, arb_ayn);
-               writeln('Alumno agregado con exito');
+               mostrar_registro(y)
+               buscar_legajo := true
           end;
      end;
 end;
