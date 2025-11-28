@@ -123,6 +123,10 @@ begin
                   clrscr; 
                   baja_alumnos(a, arb_leg, arb_ayn, legajo); 
                end;
+            3: begin 
+                  clrscr; 
+                  modificar_alumnos(a, arb_leg, arb_ayn, legajo);
+               end;
          end;
       end
       else
