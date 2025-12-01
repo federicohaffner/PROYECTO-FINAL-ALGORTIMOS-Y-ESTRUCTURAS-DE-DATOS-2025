@@ -15,23 +15,23 @@ procedure Menu_inicial;
 begin
   clrscr;
   textcolor(11);
-  gotoxy(33, 1);
+  gotoxy(33, WhereY);
   writeln('|===========================================================|');
-  gotoxy(33, 2);
+  gotoxy(33, WhereY);
   writeln('|------------------------ CHATTERBOT -----------------------|');
-  gotoxy(33, 3);
+  gotoxy(33, WhereY);
   writeln('|===========================================================|');
   textcolor(11);
-  gotoxy(57, 5);
+  gotoxy(57, WhereY);
   writeln('HOLA BIENVENIDO');
-  gotoxy(38, 6);
+  gotoxy(38, WhereY);
   writeln('SOY TU ASISTENTE VIRTUAL ESPECIALIZADO EN GEOGRAFIA');
   textcolor(white);
   writeln;
-  gotoxy(36, 8);
+  gotoxy(36, WhereY);
   writeln('Ingrese su consulta');
   writeln;
-  gotoxy(36, 10);
+  gotoxy(36, WhereY);
   writeln('[Escribe "ayuda" para comandos | "salir" para terminar]');
   writeln;
   textcolor(white);
@@ -90,4 +90,4 @@ begin
   Menu_final;
 end;
 
-end. 
+end.   

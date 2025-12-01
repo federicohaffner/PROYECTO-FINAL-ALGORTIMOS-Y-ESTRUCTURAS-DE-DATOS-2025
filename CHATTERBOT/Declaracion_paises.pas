@@ -21,11 +21,8 @@ type
   t_arch_paises = file of t_dato_pais;
   t_vector_pais = array[1..paises_max] of t_dato_pais;
 
-  TTipoConsulta = (tcCapital, tcUbicacion, tcInformacion, tcListado,
-                   tcComparacion, tcPoblacion, tcIdioma, tcMoneda,
-                   tcSuperficie, tcAyuda, tcDesconocida, tcSaludo,
-                   tcCuriosos, tcRegion);
+  TTipoConsulta = (tcCapital, tcUbicacion, tcInformacion, tcListado, tcComparacion, tcPoblacion, tcIdioma, tcMoneda, tcSuperficie, tcAyuda, tcDesconocida, tcSaludo, tcCuriosos, tcRegion);
 
 implementation
 
-end.
+end.                                       
