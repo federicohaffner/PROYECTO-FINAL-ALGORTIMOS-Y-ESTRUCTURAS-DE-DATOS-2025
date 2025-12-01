@@ -1,23 +1,20 @@
-unit UnitUtilidades;
+unit Utilidades_paises;
 
 interface
-
-function FormatearNumero(num: longint): string;
-function CompletarConEspacios(texto: string; longitud: integer): string;
-function CortarTexto(texto: string; longitud: integer): string;
-function ObtenerFechaActual: string;
-function ObtenerHoraActual: string;
-
-implementation
-
 uses
   sysutils;
 
 function FormatearNumero(num: longint): string;
+function CompletarConEspacios(texto: string; longitud: integer): string;
+function CortarTexto(texto: string; longitud: integer): string;
+
+implementation
+
+
+function FormatearNumero(num: longint): string;
 var
-  s: string;
+  s,resultado: string;
   i, len: integer;
-  resultado: string;
 begin
   str(num, s);
   resultado := '';
@@ -52,14 +49,4 @@ begin
     CortarTexto := copy(texto, 1, longitud);
 end;
 
-function ObtenerFechaActual: string;
-begin
-  ObtenerFechaActual := DateToStr(Date);
-end;
-
-function ObtenerHoraActual: string;
-begin
-  ObtenerHoraActual := TimeToStr(Time);
-end;
-
-end.
+end. 

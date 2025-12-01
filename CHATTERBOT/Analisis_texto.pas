@@ -1,37 +1,17 @@
-unit UnitAnalisisLenguaje;
+unit Palabras_paises;
 
 interface
 
 uses
-  UnitTiposProcesamiento, UnitTiposPaises;
+  sysutils, Busqueda_paises, Declaracion_paises;
 
-function DeterminarTipoConsulta(entrada: string): TTipoConsulta;
-function ExtraerNombrePais(entrada: string): string;
+function DeterminarTipoConsulta(entrada: string; vector: t_vector_pais; cantidad: integer): TTipoConsulta;
+function ExtraerNombrePais(entrada: string; vector: t_vector_pais; cantidad: integer): string;
 function ExtraerRegion(entrada: string): string;
-function ExtraerDosPaises(entrada: string; var pais1, pais2: string): boolean;
-function NormalizarTexto(texto: string): string;
+function ExtraerDosPaises(entrada: string; var pais1, pais2: string; vector: t_vector_pais; cantidad: integer): boolean;
 
 implementation
-
-uses
-  sysutils, UnitBusquedasPaises;
-
-function NormalizarTexto(texto: string): string;
-var
-  resultado: string;
-begin
-  resultado := lowercase(texto);
-  // Reemplazar caracteres especiales
-  resultado := StringReplace(resultado, '¿', '', [rfReplaceAll]);
-  resultado := StringReplace(resultado, '?', '', [rfReplaceAll]);
-  resultado := StringReplace(resultado, '¡', '', [rfReplaceAll]);
-  resultado := StringReplace(resultado, '!', '', [rfReplaceAll]);
-  resultado := StringReplace(resultado, '.', '', [rfReplaceAll]);
-  resultado := StringReplace(resultado, ',', '', [rfReplaceAll]);
-  NormalizarTexto := resultado;
-end;
-
-function DeterminarTipoConsulta(entrada: string): TTipoConsulta;
+function DeterminarTipoConsulta(entrada: string; vector: t_vector_pais; cantidad: integer): TTipoConsulta;
 var
   entradaMin: string;
   resultado: TTipoConsulta;
@@ -41,12 +21,12 @@ begin
   encontrado := false;
   resultado := tcDesconocida;
 
-  // Saludos
   if not encontrado then
   begin
     if (pos('hola', entradaMin) > 0) or
        (pos('buenos dias', entradaMin) > 0) or
        (pos('buenas tardes', entradaMin) > 0) or
+       (pos('buenas noches', entradaMin) > 0) or
        (pos('que tal', entradaMin) > 0) then
     begin
       resultado := tcSaludo;
@@ -54,7 +34,6 @@ begin
     end;
   end;
 
-  // Preguntas sobre capital
   if not encontrado then
   begin
     if (pos('capital', entradaMin) > 0) or
@@ -65,22 +44,17 @@ begin
     end;
   end;
 
-  // Preguntas sobre ubicación
   if not encontrado then
   begin
     if (pos('donde queda', entradaMin) > 0) or
        (pos('donde esta', entradaMin) > 0) or
-       (pos('ubicacion', entradaMin) > 0) or
-       (pos('coordenadas', entradaMin) > 0) or
-       (pos('latitud', entradaMin) > 0) or
-       (pos('longitud', entradaMin) > 0) then
+       (pos('ubicacion', entradaMin) > 0) then
     begin
       resultado := tcUbicacion;
       encontrado := true;
     end;
   end;
 
-  // Preguntas sobre población
   if not encontrado then
   begin
     if (pos('poblacion', entradaMin) > 0) or
@@ -93,7 +67,6 @@ begin
     end;
   end;
 
-  // Preguntas sobre idioma
   if not encontrado then
   begin
     if (pos('idioma', entradaMin) > 0) or
@@ -106,7 +79,6 @@ begin
     end;
   end;
 
-  // Preguntas sobre moneda
   if not encontrado then
   begin
     if (pos('moneda', entradaMin) > 0) or
@@ -119,7 +91,18 @@ begin
     end;
   end;
 
-  // Listados y regiones
+  if not encontrado then
+  begin
+    if (pos('superficie', entradaMin) > 0) or
+       (pos('area', entradaMin) > 0) or
+       (pos('tamanio', entradaMin) > 0) or
+       (pos('extension', entradaMin) > 0) then
+    begin
+      resultado := tcSuperficie;
+      encontrado := true;
+    end;
+  end;
+
   if not encontrado then
   begin
     if (pos('lista', entradaMin) > 0) or
@@ -132,7 +115,6 @@ begin
     end;
   end;
 
-  // Preguntas sobre regiones específicas
   if not encontrado then
   begin
     if (pos('america del norte', entradaMin) > 0) or
@@ -148,12 +130,10 @@ begin
     end;
   end;
 
-  // Comparaciones
   if not encontrado then
   begin
     if (pos('compara', entradaMin) > 0) or
        (pos('diferencia', entradaMin) > 0) or
-       (pos('cual es mas grande', entradaMin) > 0) or
        (pos('versus', entradaMin) > 0) or
        (pos(' vs ', entradaMin) > 0) then
     begin
@@ -162,12 +142,10 @@ begin
     end;
   end;
 
-  // Datos curiosos
   if not encontrado then
   begin
     if (pos('dato curioso', entradaMin) > 0) or
        (pos('curiosidad', entradaMin) > 0) or
-       (pos('sabias que', entradaMin) > 0) or
        (pos('aleatorio', entradaMin) > 0) or
        (pos('cuentame algo', entradaMin) > 0) then
     begin
@@ -176,7 +154,6 @@ begin
     end;
   end;
 
-  // Ayuda
   if not encontrado then
   begin
     if (pos('ayuda', entradaMin) > 0) or
@@ -189,7 +166,6 @@ begin
     end;
   end;
 
-  // Información general
   if not encontrado then
   begin
     if (pos('dime sobre', entradaMin) > 0) or
@@ -203,10 +179,9 @@ begin
     end;
   end;
 
-  // Si tiene nombre de país, asumir información general
   if not encontrado then
   begin
-    if ExtraerNombrePais(entrada) <> '' then
+    if ExtraerNombrePais(entrada, vector, cantidad) <> '' then
     begin
       resultado := tcInformacion;
       encontrado := true;
@@ -216,7 +191,7 @@ begin
   DeterminarTipoConsulta := resultado;
 end;
 
-function ExtraerNombrePais(entrada: string): string;
+function ExtraerNombrePais(entrada: string; vector: t_vector_pais; cantidad: integer): string;
 var
   i: integer;
   entradaMin: string;
@@ -228,28 +203,16 @@ begin
   encontrado := false;
   i := 1;
 
-  // Lista de países para buscar en el texto
-  while (i <= cantidadPaises) and (not encontrado) do
+  while (i <= cantidad) and (not encontrado) do
   begin
-    nombrePais := lowercase(paisesMemoria[i].nombre);
+    nombrePais := lowercase(vector[i].nombre);
     if pos(nombrePais, entradaMin) > 0 then
     begin
-      ExtraerNombrePais := paisesMemoria[i].nombre;
+      ExtraerNombrePais := vector[i].nombre;
       encontrado := true;
     end
     else
-      i := i + 1;
-  end;
-
-  // Buscar variaciones comunes solo si no se encontró
-  if not encontrado then
-  begin
-    if pos('eeuu', entradaMin) > 0 then
-      ExtraerNombrePais := 'Estados Unidos'
-    else if pos('usa', entradaMin) > 0 then
-      ExtraerNombrePais := 'Estados Unidos'
-    else if pos('estados unidos', entradaMin) > 0 then
-      ExtraerNombrePais := 'Estados Unidos';
+      inc(i);
   end;
 end;
 
@@ -264,22 +227,25 @@ begin
      (pos('norteamerica', entradaMin) > 0) or
      (pos('norte america', entradaMin) > 0) then
     ExtraerRegion := 'America del Norte'
+
   else if (pos('america del sur', entradaMin) > 0) or
           (pos('sudamerica', entradaMin) > 0) or
           (pos('sur america', entradaMin) > 0) or
           (pos('suramerica', entradaMin) > 0) then
     ExtraerRegion := 'America del Sur'
+
   else if (pos('america central', entradaMin) > 0) or
           (pos('centroamerica', entradaMin) > 0) or
           (pos('centro america', entradaMin) > 0) then
     ExtraerRegion := 'America Central'
+
   else if (pos('caribe', entradaMin) > 0) or
           (pos('antillas', entradaMin) > 0) or
           (pos('islas del caribe', entradaMin) > 0) then
     ExtraerRegion := 'Caribe';
 end;
 
-function ExtraerDosPaises(entrada: string; var pais1, pais2: string): boolean;
+function ExtraerDosPaises(entrada: string; var pais1, pais2: string; vector: t_vector_pais; cantidad: integer): boolean;
 var
   i: integer;
   entradaMin: string;
@@ -292,26 +258,26 @@ begin
   encontrado2 := false;
   i := 1;
 
-  while (i <= cantidadPaises) and (not encontrado2) do
+  while (i <= cantidad) and (not encontrado2) do
   begin
-    if pos(lowercase(paisesMemoria[i].nombre), entradaMin) > 0 then
+    if pos(lowercase(vector[i].nombre), entradaMin) > 0 then
     begin
       if not encontrado1 then
       begin
-        pais1 := paisesMemoria[i].nombre;
+        pais1 := vector[i].nombre;
         encontrado1 := true;
       end
       else if not encontrado2 then
       begin
-        pais2 := paisesMemoria[i].nombre;
+        pais2 := vector[i].nombre;
         encontrado2 := true;
       end;
     end;
-    i := i + 1;
+    inc(i);
   end;
 
   ExtraerDosPaises := encontrado1 and encontrado2;
 end;
 
-end.
+end. 
 
