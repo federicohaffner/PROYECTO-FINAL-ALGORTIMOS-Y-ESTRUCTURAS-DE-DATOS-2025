@@ -5,8 +5,6 @@ uses
   sysutils,crt;
 
 function FormatearNumero(num: longint): string;
-function CompletarConEspacios(texto: string; longitud: integer): string;
-function CortarTexto(texto: string; longitud: integer): string;
 procedure Centrado(texto: string);
 
 implementation
@@ -38,4 +36,5 @@ begin
 end;
 
 end.   
+
 
