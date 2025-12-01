@@ -44,8 +44,10 @@ begin
   readln(disc);
   while (disc < 1) or (disc > 5) do
   begin
+     clrscr;
+     DibujarMarco(15, 5, 65, 18, LightGreen);
      textcolor(LightRed);
-     gotoxy(20, 16); write('Numero invalido. Reintente (1-5): ');
+     gotoxy(20, 15); write('Numero invalido. Reintente (1-5): ');
      textcolor(White);
      readln(disc);
   end;
@@ -474,6 +476,8 @@ begin
 
                     while not(fecha_valida(nueva_fecha)) do
                     begin
+                        clrscr;
+                        DibujarMarco(15, 9, 65, 16, LightGreen);
                         textcolor(LightRed);
                         gotoxy(20, 14); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
                         gotoxy(47, 14);
