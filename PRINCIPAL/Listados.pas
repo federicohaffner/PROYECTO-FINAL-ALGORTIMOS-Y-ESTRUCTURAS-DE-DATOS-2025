@@ -1,37 +1,37 @@
-unit listados;
+unit Listados;
 {$mode ObjFPC}{$H+}
 interface
     
 uses
     crt, SysUtils, Classes, unit_arbol, archivos, validaciones, usa_arbol, interfaz_aux;
 
-procedure listado_alumnos(arb_ayn:t_punt);
+procedure listado_alumnos(arb_ayn:t_punt; var a: t_archivo_alumnos);
 procedure listado_ev (arb_ev:t_punt; legajo:string);
 procedure listado_discapacidad (arb_ayn:t_punt; disc:byte; var arch:t_archivo_alumnos  );
     
 implementation
     
-procedure listado_alumnos(arb_ayn:t_punt);
+procedure listado_alumnos(arb_ayn:t_punt; var a: t_archivo_alumnos);
+var
+    linea: integer;
 begin
     clrscr;
     if arb_ayn <> nil then
     begin
-        DibujarMarco(5, 2, 75, 24, LightBlue);
-        TextoCentrado(3, 'LISTADO COMPLETO DE ALUMNOS', White);
-        TextoCentrado(4, 'Ordenado alfabeticamente', LightCyan);
-        textcolor(Blue);
+        DibujarMarco(5, 2, 75, 24, LightGreen);
+        TextoCentrado(3, 'LISTADO DE ALUMNOS ACTIVOS', White);
+        TextoCentrado(4, 'Ordenado alfabeticamente', LightGreen);
+        textcolor(LightGreen);
         gotoxy(6, 5);
         writeln('--------------------------------------------------------------------');
-        textcolor(Yellow);
         gotoxy(10, 6); write('APELLIDO Y NOMBRE');
         gotoxy(50, 6); write('LEGAJO');
-        textcolor(Blue);
         gotoxy(6, 7);
         writeln('--------------------------------------------------------------------');
         textcolor(LightGray);
-        gotoxy(10, 8);
-        inorden(arb_ayn);
-        textcolor(Blue);
+        linea := 8;
+        inorden_alumnos_activos(arb_ayn, a, linea);
+        textcolor(LightGreen);
         gotoxy(6, 23);
         writeln('--------------------------------------------------------------------');
         textcolor(White);
@@ -40,7 +40,7 @@ begin
     end
     else
     begin
-        DibujarMarco(20, 10, 60, 14, LightBlue);
+        DibujarMarco(20, 10, 60, 14, LightGreen);
         textcolor(LightRed);
         TextoCentrado(11, 'SIN DATOS', White);
         textcolor(LightGray);
@@ -52,28 +52,31 @@ begin
 end;
 
 procedure listado_ev (arb_ev:t_punt; legajo:string);
+var
+    linea: integer;
 begin
     clrscr;
     if arb_ev <> nil then
     begin
-        DibujarMarco(5, 2, 75, 24, LightBlue);
+        DibujarMarco(5, 2, 75, 24, LightGreen);
         TextoCentrado(3, 'LISTADO DE EVALUACIONES', White);
-        textcolor(LightCyan);
+        textcolor(LightGreen);
         gotoxy(28, 4); write('Legajo del alumno: ', legajo);
-        textcolor(Blue);
+        textcolor(LightGreen);
         gotoxy(6, 5);
         writeln('--------------------------------------------------------------------');  
-        textcolor(Yellow);
+        textcolor(LightGreen);
         gotoxy(10, 6); write('FECHA');
         gotoxy(30, 6); write('OBSERVACIONES');
         gotoxy(60, 6); write('VALORACION');
-        textcolor(Blue);
+        textcolor(LightGreen);
         gotoxy(6, 7);
         writeln('--------------------------------------------------------------------');
-        textcolor(LightGray);
+        textcolor(LightGreen);
         gotoxy(10, 8);
-        INORDEN_leg(arb_ev, legajo);
-        textcolor(Blue);
+        linea := 8;
+        INORDEN_leg(arb_ev, legajo, linea);
+        textcolor(LightGreen);
         gotoxy(6, 23);
         writeln('--------------------------------------------------------------------');
         textcolor(White);
@@ -82,7 +85,7 @@ begin
     end
     else
     begin
-        DibujarMarco(20, 10, 60, 14, LightBlue);
+        DibujarMarco(20, 10, 60, 14, LightGreen);
         textcolor(LightRed);
         TextoCentrado(11, 'SIN DATOS', White);
         textcolor(LightGray);
@@ -94,28 +97,30 @@ begin
 end;
 
 procedure listado_discapacidad (arb_ayn:t_punt; disc:byte; var arch:t_archivo_alumnos);
+var
+    linea:integer;
 begin
     clrscr;
     if arb_ayn <> nil then
     begin
-        DibujarMarco(5, 2, 75, 24, LightBlue);
+        DibujarMarco(5, 2, 75, 24, LightGreen);
         TextoCentrado(3, 'LISTADO POR DISCAPACIDAD', White);
-        textcolor(LightCyan);
+        textcolor(LightGreen);
         gotoxy(25, 4); write('Discapacidad: ', DISCAPACIDADES[disc]);
-        textcolor(Blue);
+        textcolor(LightGreen);
         gotoxy(6, 5);
         writeln('--------------------------------------------------------------------');
-        textcolor(Yellow);
+        textcolor(LightGreen);
         gotoxy(10, 6); write('APELLIDO Y NOMBRE');
-        gotoxy(45, 6); write('LEGAJO');
-        gotoxy(60, 6); write('ESTADO');
-        textcolor(Blue);
+        gotoxy(50, 6); write('LEGAJO');
+        textcolor(LightGreen);
         gotoxy(6, 7);
         writeln('--------------------------------------------------------------------');
-        textcolor(LightGray);
+        textcolor(LightGreen);
         gotoxy(10, 8);
-        inorden_disc(arb_ayn, disc, arch);
-        textcolor(Blue);
+        linea:=8;
+        inorden_disc(arb_ayn, disc, arch, linea);
+        textcolor(LightGreen);
         gotoxy(6, 23);
         writeln('--------------------------------------------------------------------');
         textcolor(White);
@@ -124,7 +129,7 @@ begin
     end
     else
     begin
-        DibujarMarco(20, 10, 60, 14, LightBlue);
+        DibujarMarco(20, 10, 60, 14, LightGreen);
         textcolor(LightRed);
         TextoCentrado(11, 'SIN DATOS', White);
         textcolor(LightGray);
@@ -134,6 +139,5 @@ begin
         readkey;
     end;
 end;
-end;
 
-end.  
+end.     

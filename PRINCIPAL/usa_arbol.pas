@@ -3,7 +3,7 @@ unit usa_arbol;
 
 interface
 uses
-    unit_arbol, archivos;
+    unit_arbol, archivos,  crt;
 
 procedure crear_arbol (var raiz:t_punt);
 procedure agregar (var raiz:t_punt; x:t_dato_arbol);
@@ -12,8 +12,9 @@ procedure preorden(raiz:t_punt; buscado:string; var enc:boolean; var x:t_dato_ar
 procedure inorden(var raiz:t_punt);
 procedure suprime(var raiz:t_punt; x:t_dato_arbol);
 function suprime_min(var raiz:t_punt):t_dato_arbol;
-procedure inorden_leg(raiz: t_punt; legajo_buscado: string);
-procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos);
+procedure inorden_leg(raiz: t_punt; legajo_buscado: string; linea: integer);
+procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos; linea: integer);
+procedure inorden_alumnos_activos(raiz: t_punt; var a: t_archivo_alumnos; var linea: integer);
 
 implementation
 
@@ -131,41 +132,64 @@ begin
    end;
 end;
 
-procedure inorden_leg(raiz: t_punt; legajo_buscado: string);
+procedure inorden_leg(raiz: t_punt; legajo_buscado: string; linea: integer);
 var
   legajo_en_nodo: string;
   fecha_en_nodo: string;
 begin
   if raiz <> nil then
   begin
-    inorden_leg(raiz^.sai, legajo_buscado);
+    inorden_leg(raiz^.sai, legajo_buscado, linea);
     legajo_en_nodo := Copy(raiz^.info.clave, 12, Length(raiz^.info.clave)-11);
     if legajo_en_nodo = legajo_buscado then
     begin
        fecha_en_nodo := Copy(raiz^.info.clave, 1, 10);
-       Writeln(' - Evaluacion tomada la fecha: ', fecha_en_nodo);
+       gotoxy(10, linea); Write(' - Evaluacion tomada la fecha: ', fecha_en_nodo);
+       linea := linea + 1;
     end;
-    INORDEN_leg(raiz^.sad, legajo_buscado);
+    INORDEN_leg(raiz^.sad, legajo_buscado, linea);
   end;
 end;
 
-procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos);
+procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos; linea: integer);
 var
   r: t_dato_alumnos;
 begin
   if raiz <> nil then
   begin
-    inorden_disc(raiz^.sai, disc, arch);
+    inorden_disc(raiz^.sai, disc, arch, linea);
     seek(arch, raiz^.info.pos_arch);
     read(arch, r);
     if (r.estado = true) and (r.discapacidades[disc] = true) then
     begin
-       Writeln('Alumno: ', r.ayn);
-       Writeln('Legajo: ', r.legajo);
+       gotoxy(10, linea); Write('Alumno: ', r.ayn);
+       gotoxy(50, linea); Write('Legajo: ', r.legajo);
+       linea:=linea+1
     end;
-    inorden_disc(raiz^.sad, disc, arch);
+    inorden_disc(raiz^.sad, disc, arch, linea);
   end;
 end;
 
-end.
-                      
+procedure inorden_alumnos_activos(raiz: t_punt; var a: t_archivo_alumnos; var linea: integer);
+var
+   reg: t_dato_alumnos;
+begin
+   if raiz <> nil then
+   begin
+      inorden_alumnos_activos(raiz^.sai, a, linea);
+
+      seek(a, raiz^.info.pos_arch);
+      read(a, reg);
+
+      if reg.estado = true then
+      begin
+           gotoxy(10, linea); write(reg.ayn);
+           gotoxy(50, linea); write(reg.legajo);
+           linea := linea + 1;
+           if linea > 22 then linea := 22;
+      end;
+      inorden_alumnos_activos(raiz^.sad, a, linea);
+   end;
+end;
+
+end.             
