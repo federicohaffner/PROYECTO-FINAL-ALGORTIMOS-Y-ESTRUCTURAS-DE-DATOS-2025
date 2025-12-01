@@ -32,8 +32,10 @@ begin
     readln(fecha_inicio);
     while not(fecha_valida(fecha_inicio)) do
     begin
+        clrscr;
+        DibujarMarco(15, 8, 65, 14, LightGreen);
         textcolor(LightRed);
-        gotoxy(20, 12); write('Fecha invalida. Reintente: ');
+        gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
         textcolor(White);
         readln(fecha_inicio);
     end;
@@ -43,8 +45,10 @@ begin
     readln(fecha_final);
     while not(fecha_valida(fecha_final)) do
     begin
+        clrscr;
+        DibujarMarco(15, 8, 65, 14, LightGreen);
         textcolor(LightRed);
-        gotoxy(20, 14); write('Fecha invalida. Reintente: ');
+        gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
         textcolor(White);
         readln(fecha_final);
     end;

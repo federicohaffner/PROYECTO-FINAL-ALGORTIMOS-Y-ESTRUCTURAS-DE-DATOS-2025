@@ -34,8 +34,10 @@ begin
      readln(legajo);
      while not(legajo_valido(legajo)) do
      begin
+       clrscr;
+       DibujarMarco(15, 8, 65, 14, Green);
        textcolor(LightRed);
-       gotoxy(20, 12); write('Legajo invalido. Intente nuevamente: ');
+       gotoxy(20, 11); write('Legajo invalido. Intente nuevamente: ');
        textcolor(White);
        readln(legajo);
      end;
@@ -55,8 +57,10 @@ begin
      readln(ayn);
      while not(escadena(ayn)) do
      begin
+          clrscr;
+          DibujarMarco(15, 8, 65, 14, Green);
           textcolor(LightRed);
-          gotoxy(20, 12); write('Nombre invalido. Intente nuevamente: ');
+          gotoxy(20, 11); write('Nombre invalido. Intente nuevamente: ');
           textcolor(White);
           readln(ayn);
      end;
@@ -76,8 +80,10 @@ begin
      readln(f);
      while not(fecha_valida(f)) do
      begin
+       clrscr;
+       DibujarMarco(15, 8, 65, 14, Green);
        textcolor(LightRed);
-       gotoxy(20, 12); write('Fecha invalida. Intente nuevamente: ');
+       gotoxy(20, 11); write('Fecha invalida. Intente nuevamente (AAAA/MM/DD): ');
        textcolor(White);
        readln(f);
      end;
@@ -448,8 +454,10 @@ begin
                          readln(ayn);
                          while not(escadena(ayn)) do
                          begin
+                              clrscr;
+                              DibujarMarco(15, 8, 65, 14, Green);
                               textcolor(LightRed);
-                              gotoxy(20, 14); write('Nombre invalido. Reintente: ');
+                              gotoxy(20, 13); write('Nombre invalido. Reintente: ');
                               textcolor(White);
                               readln(ayn);
                          end;
@@ -476,8 +484,10 @@ begin
                          readln(fecha);
                          while not(fecha_valida(fecha)) do
                          begin
+                              clrscr;
+                              DibujarMarco(15, 8, 65, 14, Green);
                               textcolor(LightRed);
-                              gotoxy(20, 14); write('Fecha invalida. Reintente: ');
+                              gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
                               textcolor(White);
                               readln(fecha);
                          end;
