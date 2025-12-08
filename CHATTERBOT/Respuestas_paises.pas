@@ -14,6 +14,10 @@ procedure Respuesta_poblacion(entrada: string; vector: t_vector_pais; cantidad: 
 procedure Respuesta_idioma(entrada: string; vector: t_vector_pais; cantidad: integer);
 procedure Respuesta_moneda(entrada: string; vector: t_vector_pais; cantidad: integer);
 procedure Respuesta_superficie(entrada: string; vector: t_vector_pais; cantidad: integer);
+procedure Respuesta_limitrofes(entrada: string; vector: t_vector_pais; cantidad: integer);
+procedure Respuesta_independencia(entrada: string; vector: t_vector_pais; cantidad: integer);
+procedure Respuesta_comida(entrada: string; vector: t_vector_pais; cantidad: integer);
+procedure Respuesta_punto_alto(entrada: string; vector: t_vector_pais; cantidad: integer);
 procedure Respuesta_ayuda;
 procedure Respuesta_saludo;
 procedure Respuesta_dato_curioso(vector: t_vector_pais; cantidad: integer);
@@ -38,6 +42,10 @@ begin
     tcIdioma: Respuesta_idioma(entrada, vector, cantidad);
     tcMoneda: Respuesta_moneda(entrada, vector, cantidad);
     tcSuperficie: Respuesta_superficie(entrada, vector, cantidad);
+    tcLimitrofes: Respuesta_limitrofes(entrada, vector, cantidad);
+    tcIndependencia: Respuesta_independencia(entrada, vector, cantidad);  
+    tcComida: Respuesta_comida(entrada, vector, cantidad);                
+    tcPuntoAlto: Respuesta_punto_alto(entrada, vector, cantidad);         
     tcComparacion: Respuesta_comparacion(entrada, vector, cantidad);
     tcRegion: Respuesta_region(entrada, vector, cantidad);
     tcAyuda: Respuesta_ayuda;
@@ -106,17 +114,25 @@ begin
     Centrado('Puedo contarte sobre cualquier pais de America.');
   end
   else
-  begin
+   begin
     pais := BuscarPais(nombrePais, vector, cantidad);
     if pais.activo then
     begin
-      Centrado('-   Informacion sobre ' + pais.nombre + '   -');
+      Centrado('-    Informacion sobre ' + pais.nombre + '   -');
+      Centrado('');
       Centrado('Capital: ' + pais.capital);
       Centrado('Region: ' + pais.continente);
-      Centrado('Poblacion: Aproximadamente ' + FormatearNumero(pais.poblacion) + ' habitantes');
+      Centrado('Poblacion: ' + FormatearNumero(pais.poblacion) + ' habitantes');
       Centrado('Superficie: ' + FormatearNumero(pais.superficie) + ' km^2');
-      Centrado('Idioma oficial: ' + pais.idioma);
+      Centrado('Idioma: ' + pais.idioma);
       Centrado('Moneda: ' + pais.moneda);
+      Centrado('Independencia: ' + pais.independencia);
+      Centrado('Comida tipica: ' + pais.comida_tipica);
+      Centrado('Punto mas alto: ' + pais.punto_alto + ' (' + IntToStr(pais.altura_max) + 'mts)');
+      if pais.limitrofes <> '' then
+        Centrado('Paises limitrofes: ' + pais.limitrofes)
+      else
+        Centrado('Pais insular (sin fronteras terrestres)');
     end
     else
       Centrado('No encontre informacion sobre ese pais.');
@@ -281,6 +297,116 @@ begin
   end;
 end;
 
+procedure Respuesta_limitrofes(entrada: string; vector: t_vector_pais; cantidad: integer);
+var
+  nombrePais: string;
+  pais: t_dato_pais;
+begin
+  nombrePais := ExtraerNombrePais(entrada, vector, cantidad);
+  
+  if nombrePais = '' then
+  begin
+    Centrado('De que pais quieres saber los limitrofes?');
+  end
+  else
+  begin
+    pais := BuscarPais(nombrePais, vector, cantidad);
+    if pais.activo then
+    begin
+      if pais.limitrofes <> '' then
+      begin
+        Centrado(pais.nombre + ' limita con:');
+        Centrado(pais.limitrofes);
+      end
+      else
+        Centrado(pais.nombre + ' es un pais insular (no tiene fronteras terrestres).');
+    end
+    else
+      Centrado('No tengo informacion sobre ese pais.');
+  end;
+end;
+
+procedure Respuesta_independencia(entrada: string; vector: t_vector_pais; cantidad: integer);
+var
+  nombrePais: string;
+  pais: t_dato_pais;
+begin
+  nombrePais := ExtraerNombrePais(entrada, vector, cantidad);
+  
+  if nombrePais = '' then
+  begin
+    Centrado('De que pais quieres saber la fecha de independencia?');
+  end
+  else
+  begin
+    pais := BuscarPais(nombrePais, vector, cantidad);
+    if pais.activo then
+    begin
+      Centrado(pais.nombre + ' declaro su independencia el ' + pais.independencia + '.');
+
+      if pos('15 de septiembre de 1821', pais.independencia) > 0 then
+        Centrado('Dato: Comparte fecha de independencia con otros paises centroamericanos!');
+    end
+    else
+      Centrado('No tengo informacion sobre ese pais.');
+  end;
+end;
+
+procedure Respuesta_comida(entrada: string; vector: t_vector_pais; cantidad: integer);
+var
+  nombrePais: string;
+  pais: t_dato_pais;
+begin
+  nombrePais := ExtraerNombrePais(entrada, vector, cantidad);
+  
+  if nombrePais = '' then
+  begin
+    Centrado('De que pais quieres saber la comida tipica?');
+  end
+  else
+  begin
+    pais := BuscarPais(nombrePais, vector, cantidad);
+    if pais.activo then
+    begin
+      Centrado('La comida tipica de ' + pais.nombre + ' es:');
+      Centrado(pais.comida_tipica);
+    end
+    else
+      Centrado('No tengo informacion sobre ese pais.');
+  end;
+end;
+
+procedure Respuesta_punto_alto(entrada: string; vector: t_vector_pais; cantidad: integer);
+var
+  nombrePais: string;
+  pais: t_dato_pais;
+begin
+  nombrePais := ExtraerNombrePais(entrada, vector, cantidad);
+  
+  if nombrePais = '' then
+  begin
+    Centrado('De que pais quieres saber el punto mas alto?');
+  end
+  else
+  begin
+    pais := BuscarPais(nombrePais, vector, cantidad);
+    if pais.activo then
+    begin
+      Centrado('El punto mas alto de ' + pais.nombre + ' es:');
+      Centrado(pais.punto_alto + ' con ' + IntToStr(pais.altura_max) + ' metros sobre el nivel del mar.');
+      
+      if pais.altura_max > 6000 then
+        Centrado('Es una de las montanias mas altas de America!')
+      else if pais.altura_max < 1000 then
+        Centrado('Es un pais relativamente plano.')
+      else if pais.altura_max > 4000 then
+        Centrado('Tiene montanias muy elevadas.');
+    end
+    else
+      Centrado('No tengo informacion sobre ese pais.');
+  end;
+end;
+
 procedure Respuesta_ayuda;
 begin
   Centrado('Claro. Puedo ayudarte con informacion sobre los paises de America.');
@@ -293,8 +419,15 @@ begin
   Centrado('  - "Que idioma se habla en [pais]?"');
   Centrado('  - "Que moneda usan en [pais]?"');
   Centrado('  - "Cual es la superficie de [pais]?"');
+  Centrado('  - "Cual es la comida tipica de [pais]?"');
+  Centrado('  - "Cuando se independizo [pais]?"');
+  Centrado('  - "Cual es el punto mas alto de [pais]?"');
+  Centrado('  - "Con que paises limita [pais]?"');
+  Centrado('=== OTRAS OPCIONES ===');
   Centrado('  - "Muestra los paises de [region]"');
+  Centrado('  - "Compara [pais1] y [pais2]"');
   Centrado('  - "Dame un dato curioso"');
+  Centrado('');
   Centrado('');
   Centrado('Preguntame lo que quieras saber');
 end;

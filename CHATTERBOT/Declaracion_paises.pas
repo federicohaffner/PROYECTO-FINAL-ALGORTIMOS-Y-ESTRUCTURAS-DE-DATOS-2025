@@ -13,6 +13,11 @@ type
     superficie: longint;
     continente: string[20];
     poblacion: longint;
+    limitrofes: string[100];
+    independencia: string[60];     
+    comida_tipica: string[80];     
+    punto_alto: string[50];        
+    altura_max: integer;          
     idioma: string[30];
     moneda: string[30];
     activo: boolean;
@@ -21,8 +26,12 @@ type
   t_arch_paises = file of t_dato_pais;
   t_vector_pais = array[1..paises_max] of t_dato_pais;
 
-  TTipoConsulta = (tcCapital, tcUbicacion, tcInformacion, tcListado, tcComparacion, tcPoblacion, tcIdioma, tcMoneda, tcSuperficie, tcAyuda, tcDesconocida, tcSaludo, tcCuriosos, tcRegion);
-
+ TTipoConsulta = (tcCapital, tcUbicacion, tcInformacion, tcListado, 
+                   tcComparacion, tcPoblacion, tcIdioma, tcMoneda, 
+                   tcSuperficie, tcLimitrofes, tcIndependencia, 
+                   tcComida, tcPuntoAlto, tcAyuda, tcDesconocida, 
+                   tcSaludo, tcCuriosos, tcRegion);
+                                    
 implementation
 
 end.                                       
