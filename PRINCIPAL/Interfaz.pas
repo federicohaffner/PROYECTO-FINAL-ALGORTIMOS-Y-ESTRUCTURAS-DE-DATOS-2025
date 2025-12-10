@@ -64,16 +64,17 @@ var
 begin
    repeat
       clrscr;
-      DibujarMarco(15, 6, 65, 18, green);
+      DibujarMarco(18, 6, 60, 14, green);
       TextoCentrado(7, 'GESTION DE ALUMNOS', White);
       TextoCentrado(8, 'Buscar alumno por legajo', green);
       textcolor(green);
-      gotoxy(16, 9);
-      writeln('-------------------------------------------------');
+      gotoxy(19, 9);
+      writeln('-----------------------------------------');
       textcolor(green);
-      gotoxy(20, 11); write('Legajo del alumno: ');
-      gotoxy(20, 12); write('0- VOLVER: ');
-      textcolor(White);
+      gotoxy(22, 11); write('Legajo del alumno ');
+      TextoCentrado(15, '(Ingrese 0 para volver)', LightGray);
+      gotoxy(22, 12); write(': ');
+      textcolor(GREEN);
       readln(legajo);
       if legajo <> '0' then
       begin
@@ -81,16 +82,20 @@ begin
          while not(legajo_valido(legajo)) and seguir_validacion do
          begin
             clrscr;
-            DibujarMarco(15, 10, 65, 16, green);
+            DibujarMarco(15, 6, 55, 10, lightRed);
             textcolor(LightRed);
-            gotoxy(20, 11); write('Legajo invalido.');
-            textcolor(LightRed);
-            gotoxy(20,12); write('Reintente  ');
-            gotoxy(20, 13); write('0- VOLVER:  ');
+            gotoxy(16, 8);
+            writeln('---------------------------------------');
+            gotoxy(20, 7);
+            write('Legajo invalido. Reintente  ');
+            gotoxy(25, 11);
+            textcolor(lightgray);
+            writeln('Ingrese 0 para volver');
             textcolor(White);
+            gotoxy(16, 9); write(': ');
             readln(legajo);
             if legajo = '0' then seguir_validacion := false;
-         end;
+         end; 
          if (legajo <> '0') and seguir_validacion then
          begin
             acceso_concedido := false;
