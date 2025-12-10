@@ -295,10 +295,10 @@ begin
           textcolor(LightGray);
           TextoCentrado(12, 'No se puede evaluar un alumno inactivo', LightGray);
           textcolor(LightGreen);
-          gotoxy(20, 14); write('Desea reactivarlo? (SI/NO): ');
+          gotoxy(20, 14); write('Desea reactivarlo? (S/N): ');
           textcolor(White);
           readln(op);
-          if upcase(op) = 'SI' then
+          if upcase(op) = 'S' then
           begin
               alta_alumnos(a, legajo, arb_leg, arb_ayn);
           end;
@@ -345,10 +345,10 @@ begin
         textcolor(LightRed);
         TextoCentrado(11, 'ALUMNO NO ENCONTRADO', White);
         textcolor(LightGreen);
-        gotoxy(20, 13); write('Desea darlo de alta? (SI/NO): ');
+        gotoxy(20, 13); write('Desea darlo de alta? (S/N): ');
         textcolor(White);
         readln(op);
-        if upcase(op) = 'SI' then
+        if upcase(op) = 'S' then
         begin
             alta_alumnos(a, legajo, arb_leg, arb_ayn);
         end;
