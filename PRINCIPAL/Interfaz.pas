@@ -45,6 +45,8 @@ begin
         4:menu_estadisticas(a, e, arb_ev, arb_leg);
       end;
    until opcion=0;
+   TextoCentrado(28, 'Gracias por usar el sistema. Hasta luego!', LightGreen);
+   readkey;
    cerrar_archivo_1(a);
    cerrar_archivo_2(e);
 
@@ -69,8 +71,8 @@ begin
       TextoCentrado(7, 'GESTION DE ALUMNOS', White);
       TextoCentrado(8, 'Buscar alumno por legajo', green);
       textcolor(green);
-      gotoxy(16, 9);
-      writeln('-------------------------------------------------');
+      gotoxy(19, 9);
+      writeln('-----------------------------------------');
       textcolor(green);
       gotoxy(35, 15); write(' (0 Salir) ');
       gotoxy(20, 11); write('Legajo del alumno: ');
@@ -90,6 +92,7 @@ begin
             textcolor(Red);
             gotoxy(20, 10); write('Reintente: ');
             textcolor(White);
+            gotoxy(16, 9); write(': ');
             readln(legajo);
          end;
             acceso_concedido := false;
@@ -310,6 +313,5 @@ begin
            end;
       end;
    until opcion = 0;
-   writeln('Gracias por usar el sistema. ¡Hasta luego!');
 end;
 end.    

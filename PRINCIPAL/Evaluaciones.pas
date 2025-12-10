@@ -45,6 +45,9 @@ begin
   while (disc < 1) or (disc > 5) do
   begin
      textcolor(LightRed);
+     gotoxy(20, 15); write('Numero invalido.');
+     textcolor(LigthRed); 
+     gotoxy(20,16); write('Reintente (1-5): ');
      gotoxy(20, 16); write('Numero invalido. Reintente (1-5): ');
      textcolor(White);
      readln(disc);
@@ -61,6 +64,7 @@ begin
   textcolor(LightGreen);
   gotoxy(25, 13); write('Legajo (8 digitos) ');
   textcolor(LightGreen);
+  gotoxy(22, 14); write('0- VOLVER: ');
   gotoxy(22, 14); write('0. VOLVER: ');
   textcolor(White);
   readln(l);
@@ -71,9 +75,13 @@ begin
        TextoCentrado(11, 'INGRESO DE LEGAJO', White);
        textcolor(LightRed);
        gotoxy(25, 13); write('Legajo invalido.');
+        textcolor(LightRed);
+       gotoxy(25, 14); write('Reintente: ');
+       gotoxy(25, 13); write('Legajo invalido.');
        textcolor(LightRed);
        gotoxy(25, 14); write('Reintente ');
        textcolor(LightRed);
+       gotoxy(22, 15); write('0- VOLVER: ');
        gotoxy(22, 15); write('0. VOLVER: ');
        textcolor(White);
        readln(l);
@@ -91,6 +99,7 @@ begin
   textcolor(LightGreen);
   gotoxy(22, 13); write('Fecha (AAAA/MM/DD) ');
   textcolor(LightGreen);
+  gotoxy(22, 14); write('0- VOLVER: ');
   gotoxy(22, 14); write('0. VOLVER: ');
   textcolor(White);
   readln(f);
@@ -102,8 +111,12 @@ begin
     textcolor(LightRed);
     gotoxy(22, 13); write('Fecha invalida.');
     textcolor(LightRed);
+    gotoxy(22, 14); write('Reintente (AAAA/MM/DD): ');
+    gotoxy(22, 13); write('Fecha invalida.');
+    textcolor(LightRed);
     gotoxy(22, 14); write('Reintente (AAAA/MM/DD) ');
     textcolor(LightRed);
+    gotoxy(22, 14); write('0- VOLVER: ');
     gotoxy(22, 15); write('0. VOLVER: ');
     textcolor(White);
     readln(f);
@@ -141,6 +154,9 @@ begin
             while not(valoracion_valida(val)) do
             begin
                textcolor(LightRed);
+               gotoxy(15, linea + 1); write('Valor invalido.');
+               textcolor(LightRed);
+               gotoxy(15, linea + 2); write('Ingrese 0-4: ');
                gotoxy(15, linea + 1); write('Valor invalido.');
                textcolor(LightRed);
                gotoxy(15, linea + 2); write('Ingrese 0-4: ');
@@ -300,8 +316,10 @@ begin
           TextoCentrado(12, 'No se puede evaluar un alumno inactivo', LightGray);
           textcolor(LightGreen);
           gotoxy(20, 14); write('Desea reactivarlo? (S/N): ');
+          gotoxy(20, 14); write('Desea reactivarlo? (S/N): ');
           textcolor(White);
           readln(op);
+          if upcase(op) = 'S' then
           if upcase(op) = 'S' then
           begin
               clrscr;
@@ -357,8 +375,10 @@ begin
         TextoCentrado(11, 'ALUMNO NO ENCONTRADO', White);
         textcolor(LightGreen);
         gotoxy(20, 13); write('Desea darlo de alta? (S/N): ');
+        gotoxy(20, 13); write('Desea darlo de alta? (S/N): ');
         textcolor(White);
         readln(op);
+        if upcase(op) = 'S' then
         if upcase(op) = 'S' then
         begin
             alta_alumnos(a, legajo, arb_leg, arb_ayn);
@@ -435,6 +455,66 @@ begin
         if enc_alum then
         begin
            leer_archivo_1(a, x_alum.pos_arch, r_alum);
+        repeat
+            clrscr;
+            DibujarMarco(10, 2, 70, 24, LightGreen);
+            TextoCentrado(3, 'MODIFICACION DE EVALUACION', White);
+            textcolor(LightGreen);
+            gotoxy(22, 4); write('Legajo: ', legajo, ' | Fecha: ', y.fecha_ev);
+            textcolor(LightGreen);
+            gotoxy(11, 5);
+            writeln('----------------------------------------------------------');
+            textcolor(LightGreen);
+            gotoxy(15, 7); write('DATOS ACTUALES:');
+            textcolor(LightGray);
+            gotoxy(15, 8); write('Fecha: ', y.fecha_ev);
+            gotoxy(15, 9); write('Observaciones: ', y.observacion);
+            textcolor(LightGreen);
+            gotoxy(11, 10);
+            writeln('----------------------------------------------------------');   
+            textcolor(LightGreen);
+            gotoxy(15, 12); write('Que desea modificar?');
+            textcolor(White);
+            gotoxy(18, 14); write('1.');
+            textcolor(LightGray);
+            write('  Fecha de evaluacion');
+            gotoxy(18, 16);
+            textcolor(White);
+            write('2.');
+            textcolor(LightGray);
+            write('  Valoracion obtenida');
+            gotoxy(18, 18);
+            textcolor(White);
+            write('3.');
+            textcolor(LightGray);
+            write('  Observaciones');
+            gotoxy(18, 20);
+            textcolor(white);
+            write('0.');
+            textcolor(LightGray);
+            write('  Guardar y Salir');
+            
+            textcolor(LightGreen);
+            gotoxy(28, 22); write('Opcion: ');
+            textcolor(White);
+            readln(op);
+            case op of
+                1: begin
+                    clrscr;
+                    DibujarMarco(15, 9, 65, 16, LightGreen);
+                    TextoCentrado(10, 'MODIFICAR FECHA', White);
+                    textcolor(LightGreen);
+                    gotoxy(20, 12); write('Fecha actual: ');
+                    textcolor(LightGray);
+                    write(y.fecha_ev);
+                    textcolor(LightGreen);
+                    gotoxy(20, 13); write('Nueva fecha (AAAA/MM/DD) ');
+                    textcolor(LightGreen);
+                    gotoxy(20, 13); write('0- VOLVER: ');
+                    textcolor(White);
+                    readln(nueva_fecha);
+                    if nueva_fecha <> 0 then
+                    begin
             repeat
                 clrscr;
                 DibujarMarco(10, 2, 70, 24, LightGreen);
@@ -492,6 +572,93 @@ begin
                         textcolor(White);
                         readln(nueva_fecha);
 
+                        while not(fecha_valida(nueva_fecha)) do
+                        begin
+                            clrscr;
+                            DibujarMarco(15, 9, 65, 16, LightGreen);
+                            textcolor(LightRed);
+                            gotoxy(20, 14); write('Fecha invalida.');
+                            textcolor(LightRed);
+                            gotoxy(20, 15); write('Reintente (AAAA/MM/DD): ');
+                            gotoxy(47, 16);
+                            textcolor(White);
+                            readln(nueva_fecha);
+                        end;
+
+                        gotoxy(20, 14); write('                                          ');
+                        y.fecha_ev := nueva_fecha;
+                        x.clave := aux_clave_vieja;
+                        suprime(arb_ev, x);
+                        aux_clave_vieja := nueva_fecha + ' ' + legajo;
+                        dato_nuevo.clave := aux_clave_vieja;
+                        dato_nuevo.pos_arch := pos;
+                        agregar_arbol_eval(arb_ev, dato_nuevo);
+                        escribir_archivo_2(e, pos, y);
+                        textcolor(LightGreen);
+                        TextoCentrado(15, 'Fecha actualizada!', LightGreen);
+                        readkey;
+                    end;
+                   end;
+                2: begin
+                    repeat
+                        clrscr;
+                        DibujarMarco(12, 6, 68, 22, Green);
+                        TextoCentrado(7, 'MODIFICAR VALORACION', White);
+                        textcolor(LightGreen);
+                        gotoxy(18, 9); writeln('Seleccione la discapacidad a editar:');
+                        cant_opciones := 0;
+                        for i := 1 to 5 do
+                        begin
+                            if r_alum.discapacidades[i] then
+                            begin
+                                inc(cant_opciones);
+                                mapa_opciones[cant_opciones] := i;
+                                textcolor(White);
+                                gotoxy(20, 10 + cant_opciones); write(cant_opciones, '.');
+                                textcolor(LightGray);
+                                write('  ', DISCAPACIDADES[i]);
+                                textcolor(LightGreen);
+                                write(' [', y.valoracion[i], ']');
+                            end;
+                        end;
+                            textcolor(white);
+                            gotoxy(20, 12 + cant_opciones + 2); write('0. Volver');
+                            textcolor(LightGreen);
+                            gotoxy(20, 12 + cant_opciones + 4); write('Opcion: ');
+                            textcolor(White);
+                            readln(opcion);
+                            if (opcion >= 1) and (op <= cant_opciones) then
+                            begin
+                                indice := mapa_opciones[opcion];
+                                textcolor(LightGreen);
+                                gotoxy(15, 12 + cant_opciones + 6); write('                                                      ');
+                                gotoxy(15, 12 + cant_opciones + 6); write('Nuevo valor (0-4) para ', DISCAPACIDADES[indice], ': ');
+                                textcolor(White);
+                                readln(nueva_val);
+                                if valoracion_valida(nueva_val) then
+                                begin
+                                    y.valoracion[indice] := nueva_val;
+                                    escribir_archivo_2(e, pos, y);
+                                    gotoxy(15, 12 + cant_opciones + 6); write('                                                                    ');
+                                    textcolor(LightGreen);
+                                    gotoxy(25, 12 + cant_opciones + 6); write('Valoracion actualizada y guardada!');
+                                end
+                                else
+                                begin
+                                    gotoxy(15, 12 + cant_opciones + 6); write('                                                      ');
+                                    textcolor(LightRed);
+                                    gotoxy(30, 12 + cant_opciones + 6); write('Valor invalido');
+                                end;
+                                readkey;
+                            end
+                            else
+                            begin
+                            if (opcion <> 0) then
+                              begin
+                                   textcolor(LightRed);
+                                   gotoxy(30, 12 + cant_opciones + 6); write('Opcion fuera de rango');
+                                   readkey;
+                              end;
                         while not(fecha_valida(nueva_fecha)) do
                         begin
                             clrscr;

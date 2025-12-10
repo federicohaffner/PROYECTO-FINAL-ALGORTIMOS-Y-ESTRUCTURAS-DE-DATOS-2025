@@ -181,8 +181,8 @@ begin
     read(arch, r);
     if (r.estado = true) and (r.discapacidades[disc] = true) then
     begin
-       gotoxy(10, linea); Write('Alumno: ', r.ayn);
-       gotoxy(50, linea); Write('Legajo: ', r.legajo);
+       gotoxy(10, linea); Write(r.ayn);
+       gotoxy(50, linea); Write(r.legajo);
        linea:=linea+1
     end;
     inorden_disc(raiz^.sad, disc, arch, linea);

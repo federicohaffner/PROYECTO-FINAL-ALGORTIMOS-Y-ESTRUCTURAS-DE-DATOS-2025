@@ -27,10 +27,12 @@ begin
     gotoxy(16, 9);
     writeln('-------------------------------------------------');
     textcolor(LightGreen);
-    gotoxy(20, 11); write('Fecha de inicio (AAAA/MM/DD): ');
+    gotoxy(20, 11); write('Fecha de inicio (AAAA/MM/DD) ');
+    textcolor(LightGreen);
+    gotoxy(20, 12); write('0- VOLVER:');
     textcolor(White);
     readln(fecha_inicio);
-    while not(fecha_valida(fecha_inicio)) do
+    if fecha_inicio <> '0' then 
     begin
         clrscr;
         DibujarMarco(15, 8, 65, 14, LightGreen);
@@ -55,6 +57,17 @@ begin
         gotoxy(20, 13); write('Reintente (AAAA/MM/DD): ');
         textcolor(White);
         readln(fecha_final);
+        while not(fecha_valida(fecha_final)) do
+        begin
+            clrscr;
+            DibujarMarco(15, 8, 65, 14, LightGreen);
+            textcolor(LightRed);
+            gotoxy(20, 13); write('Fecha invalida.');
+            textcolor(LightRed);
+            gotoxy(20, 14); write('Reintente (AAAA/MM/DD): ');
+            textcolor(White);
+            readln(fecha_final);
+        end;
     end;
     textcolor(LightGreen);
     TextoCentrado(15, 'Fechas cargadas correctamente', LightGreen);
@@ -146,7 +159,7 @@ begin
         writeln('--------------------------------------------------------------');
         textcolor(LightGreen);
         gotoxy(12, 8); write('DISCAPACIDAD');
-        gotoxy(50, 8); write('EVALUACIONES');
+        gotoxy(55, 8); write('EVALUACIONES');
         textcolor(LightGreen);
         gotoxy(9, 9);
         writeln('--------------------------------------------------------------');
@@ -158,7 +171,7 @@ begin
             textcolor(LightGray);
             gotoxy(12, 10 + i); write(DISCAPACIDADES[i]);
             textcolor(White);
-            gotoxy(54, 10 + i); write(contadores[i]);
+            gotoxy(60, 10 + i); write(contadores[i]);
         end;
         textcolor(LightGreen);
         gotoxy(9, 16);
@@ -279,7 +292,7 @@ begin
     writeln('--------------------------------------------------------------------');
     textcolor(LightGreen);
     gotoxy(8, 8);  write('RANK');
-    gotoxy(18, 8); write('DISCAPACIDAD');
+    gotoxy(14, 8); write('DISCAPACIDAD');
     gotoxy(60, 8); write('PUNTOS');
 
     textcolor(LightGreen);
@@ -294,7 +307,7 @@ begin
             else textcolor(LightGray);
         end;
         gotoxy(10, 10 + i); write(i, '.');
-        gotoxy(18, 10 + i); write(Copy(vec_nombres[i], 1, 40));
+        gotoxy(14, 10 + i); write(Copy(vec_nombres[i], 1, 45));
         textcolor(White);
         gotoxy(62, 10 + i); write(vec_grados[i]);
     end;

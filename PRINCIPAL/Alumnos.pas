@@ -57,7 +57,7 @@ begin
      gotoxy(20, 11); write('Apellido y Nombre: ');
      textcolor(White);
      readln(ayn);
-     while not(escadena(ayn)) do
+     while not(nombre_valido(ayn)) do
      begin
           clrscr;
           DibujarMarco(15, 8, 65, 14, Green);
@@ -461,10 +461,10 @@ begin
                          textcolor(LightGray);
                          write(y.ayn);
                          textcolor(LightGreen);
-                         gotoxy(20, 13); write('Nuevo valor : ');
+                         gotoxy(20, 13); write('Nuevo valor: ');
                          textcolor(White);
                          readln(ayn);
-                         while not(escadena(ayn)) do
+                         while not(nombre_valido(ayn)) do
                          begin
                               clrscr;
                               DibujarMarco(15, 8, 65, 14, Green);
