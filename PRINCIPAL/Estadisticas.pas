@@ -35,12 +35,14 @@ begin
         clrscr;
         DibujarMarco(15, 8, 65, 14, LightGreen);
         textcolor(LightRed);
-        gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
+        gotoxy(20, 13); write('Fecha invalida.');
+        textcolor(LightRed);
+        gotoxy(20, 14); write('Reintente (AAAA/MM/DD): ');
         textcolor(White);
         readln(fecha_inicio);
     end;
     textcolor(LightGreen);
-    gotoxy(20, 13); write('Fecha final (AAAA/MM/DD)  : ');
+    gotoxy(20, 13); write('Fecha final (AAAA/MM/DD): ');
     textcolor(White);
     readln(fecha_final);
     while not(fecha_valida(fecha_final)) do
@@ -48,7 +50,9 @@ begin
         clrscr;
         DibujarMarco(15, 8, 65, 14, LightGreen);
         textcolor(LightRed);
-        gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
+        gotoxy(20, 13); write('Fecha invalida.');
+        textcolor(LightRed);
+        gotoxy(20, 13); write('Reintente (AAAA/MM/DD): ');
         textcolor(White);
         readln(fecha_final);
     end;
@@ -150,7 +154,7 @@ begin
         begin
             if contadores[i] > 0 then
                 hubo_datos := true;
-            
+
             textcolor(LightGray);
             gotoxy(12, 10 + i); write(DISCAPACIDADES[i]);
             textcolor(White);
@@ -190,8 +194,8 @@ begin
                 vector_cadenas[j + 1] := aux_str;
             end;
         end;
-    end; 
-end;  } 
+    end;
+end;  }
 
 procedure ordenamiento_seleccion(var vector_cadenas: t_vec_cadenas; var vector_enteros: t_vec_enteros);
 var
@@ -242,7 +246,7 @@ begin
             calcular_grados(arb_ev^.sad, e, puntos_dificultad, fecha_inicio, fecha_final);
     end;
 end;
-                
+
 procedure discapacidades_mayor_dificultad(var e:t_archivo_evaluaciones; arb_ev:t_punt);
 var
     fecha_inicio, fecha_final: string;
@@ -313,10 +317,10 @@ var
 begin
     clrscr;
     activos := 0;
-    
+
     for i := 1 to 5 do
         contadores[i] := 0;
-    
+
     seek(a, 0);
     while not(eof(a)) do
     begin
@@ -331,7 +335,7 @@ begin
             end;
         end;
     end;
-    
+
     if activos > 0 then
     begin
         DibujarMarco(5, 3, 75, 21, LightGreen);
@@ -346,32 +350,32 @@ begin
         textcolor(LightGreen);
         gotoxy(10, 8); write('DISCAPACIDAD');
         gotoxy(48, 8); write('CANTIDAD');
-        gotoxy(60, 8); write('PORCENTAJE'); 
+        gotoxy(60, 8); write('PORCENTAJE');
         textcolor(LightGreen);
         gotoxy(6, 9);
-        writeln('--------------------------------------------------------------------'); 
+        writeln('--------------------------------------------------------------------');
         for i := 1 to 5 do
         begin
             textcolor(LightGray);
             gotoxy(10, 10 + i); write(DISCAPACIDADES[i]);
-            
+
             textcolor(White);
             gotoxy(51, 10 + i); write(contadores[i]);
-            
+
             porcentaje := (contadores[i] / activos) * 100;
-            
+
             if porcentaje >= 50 then
                 textcolor(LightRed)
             else if porcentaje >= 25 then
                 textcolor(LightGreen)
             else
                 textcolor(LightGreen);
-                
+
             gotoxy(62, 10 + i); write(porcentaje:0:2, '%');
-        end; 
+        end;
         textcolor(LightGreen);
         gotoxy(6, 16);
-        writeln('--------------------------------------------------------------------');  
+        writeln('--------------------------------------------------------------------');
         textcolor(White);
         gotoxy(22, 19); write('Presione cualquier tecla para continuar...');
     end
@@ -387,4 +391,4 @@ begin
     end;
     readkey;
 end;
-end.   
+end.      

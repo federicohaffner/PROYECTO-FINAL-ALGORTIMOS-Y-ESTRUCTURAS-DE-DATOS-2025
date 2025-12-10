@@ -12,9 +12,11 @@ procedure preorden(raiz:t_punt; buscado:string; var enc:boolean; var x:t_dato_ar
 procedure inorden(var raiz:t_punt);
 procedure suprime(var raiz:t_punt; x:t_dato_arbol);
 function suprime_min(var raiz:t_punt):t_dato_arbol;
-procedure inorden_leg(raiz: t_punt; legajo_buscado: string; linea: integer);
-procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos; linea: integer);
+procedure inorden_leg(raiz: t_punt; legajo_buscado: string; var linea: integer; var e: t_archivo_evaluaciones);
 procedure inorden_alumnos_activos(raiz: t_punt; var a: t_archivo_alumnos; var linea: integer);
+procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos; var linea: integer);
+function arbol_vacio (raiz:t_punt): boolean;
+function arbol_lleno (raiz:t_punt): boolean;
 
 implementation
 
@@ -132,26 +134,43 @@ begin
    end;
 end;
 
-procedure inorden_leg(raiz: t_punt; legajo_buscado: string; linea: integer);
+procedure inorden_leg(raiz: t_punt; legajo_buscado: string; var linea: integer; var e: t_archivo_evaluaciones);
 var
   legajo_en_nodo: string;
-  fecha_en_nodo: string;
+  reg: t_dato_evaluaciones;
+  i: integer;
 begin
   if raiz <> nil then
   begin
-    inorden_leg(raiz^.sai, legajo_buscado, linea);
-    legajo_en_nodo := Copy(raiz^.info.clave, 12, Length(raiz^.info.clave)-11);
-    if legajo_en_nodo = legajo_buscado then
+    inorden_leg(raiz^.sai, legajo_buscado, linea, e);
+    if Length(raiz^.info.clave) > 11 then
     begin
-       fecha_en_nodo := Copy(raiz^.info.clave, 1, 10);
-       gotoxy(10, linea); Write(' - Evaluacion tomada la fecha: ', fecha_en_nodo);
-       linea := linea + 1;
+         legajo_en_nodo := Copy(raiz^.info.clave, 12, Length(raiz^.info.clave)-11);
+         if legajo_en_nodo = legajo_buscado then
+         begin
+            seek(e, raiz^.info.pos_arch);
+            read(e, reg);
+            textcolor(White);
+            gotoxy(10, linea); write(reg.fecha_ev);
+            gotoxy(30, linea); write(Copy(reg.observacion, 1, 25));
+            if Length(reg.observacion) > 25 then write('...');
+            gotoxy(60, linea);
+            for i := 1 to 5 do
+            begin
+                 if reg.valoracion[i] > 0 then textcolor(White) else textcolor(DarkGray);
+                 write(reg.valoracion[i]);
+                 textcolor(LightGray);
+                 if i < 5 then write(',');
+            end;
+            linea := linea + 1;
+            if linea > 21 then linea := 21;
+         end;
     end;
-    INORDEN_leg(raiz^.sad, legajo_buscado, linea);
+    inorden_leg(raiz^.sad, legajo_buscado, linea, e);
   end;
 end;
 
-procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos; linea: integer);
+procedure inorden_disc(raiz: t_punt; disc: byte; var arch: t_archivo_alumnos; var linea: integer);
 var
   r: t_dato_alumnos;
 begin
@@ -177,19 +196,24 @@ begin
    if raiz <> nil then
    begin
       inorden_alumnos_activos(raiz^.sai, a, linea);
-
       seek(a, raiz^.info.pos_arch);
       read(a, reg);
-
       if reg.estado = true then
       begin
+           linea := linea + 1;
+           if linea > 22 then
+           begin
+               gotoxy(10, 24); write('Presione una tecla para continuar...');
+               readkey;
+               clrscr;
+               linea := 4;
+           end;
            gotoxy(10, linea); write(reg.ayn);
            gotoxy(50, linea); write(reg.legajo);
            linea := linea + 1;
-           if linea > 22 then linea := 22;
       end;
       inorden_alumnos_activos(raiz^.sad, a, linea);
    end;
 end;
 
-end.             
+end.

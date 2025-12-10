@@ -28,4 +28,4 @@ type
   t_vec_enteros = array[1..5] of integer;
   t_vec_cadenas = array[1..5] of string;
 implementation
-end.     
+end.                      

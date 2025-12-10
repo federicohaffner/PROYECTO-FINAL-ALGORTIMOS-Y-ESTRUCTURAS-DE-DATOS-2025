@@ -7,7 +7,7 @@ uses
 procedure menu_principal;
 procedure menu_alumno( var a:t_archivo_alumnos; var arb_leg:t_punt; var arb_ayn:t_punt );
 procedure menu_seguimiento(var e: t_archivo_evaluaciones; var a: t_archivo_alumnos; var arb_ev, arb_leg, arb_ayn: t_punt);
-procedure menu_listados( var a:t_archivo_alumnos; var arb_ayn:t_punt; var arb_ev:t_punt );
+procedure menu_listados( var a:t_archivo_alumnos; var arb_ayn:t_punt; var arb_ev:t_punt; var e:t_archivo_evaluaciones);
 procedure menu_estadisticas( var a:t_archivo_alumnos; var e:t_archivo_evaluaciones; var arb_ev, arb_leg:t_punt);
 
 implementation
@@ -28,12 +28,12 @@ begin
       TextoCentrado(6, 'SISTEMA DE GESTION EDUCATIVA', White);
       TextoCentrado(7, 'Seguimiento de Aprendizaje', green);
       textcolor(green);
-      gotoxy(16, 9); 
+      gotoxy(16, 9);
       writeln('-------------------------------------------------');
       textcolor(White);
       gotoxy(25, 11); write('1.'); textcolor(LightGray); write('  Gestion de Alumnos');
       gotoxy(25, 13); textcolor(White); write('2.'); textcolor(LightGray); write('  Seguimiento y Evaluaciones');
-      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Generar Listados'); 
+      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Generar Listados');
       gotoxy(25, 17); textcolor(White); write('4.'); textcolor(LightGray); write('  Estadisticas Generales');
       gotoxy(25, 19); textcolor(white); write('0.'); textcolor(LightGray); write('  Salir del Sistema');
       TextoCentrado(24, 'Ingrese el numero de opcion: ', white);
@@ -41,12 +41,16 @@ begin
       case opcion of
         1:menu_alumno(a, arb_leg, arb_ayn);
         2:menu_seguimiento(e, a, arb_ev, arb_leg, arb_ayn);
-        3:menu_listados(a, arb_ayn, arb_ev);
+        3:menu_listados(a, arb_ayn, arb_ev,e);
         4:menu_estadisticas(a, e, arb_ev, arb_leg);
       end;
    until opcion=0;
    cerrar_archivo_1(a);
    cerrar_archivo_2(e);
+
+   TextoCentrado(26,'Gracias por usar el sistema',green);
+   TextoCentrado(27,'Hasta luego',green);
+   readkey;
 end;
 
 procedure menu_alumno(var a: t_archivo_alumnos; var arb_leg: t_punt; var arb_ayn: t_punt);
@@ -54,7 +58,6 @@ var
    legajo: string;
    opcion: byte;
    seguir_alumno: boolean;
-   seguir_validacion: boolean;
    respuesta: char;
    x_check: t_dato_arbol;
    existe_fisico: boolean;
@@ -62,31 +65,33 @@ var
 begin
    repeat
       clrscr;
-      DibujarMarco(15, 6, 65, 18, green);
+      DibujarMarco(15, 6, 65, 13, green);
       TextoCentrado(7, 'GESTION DE ALUMNOS', White);
       TextoCentrado(8, 'Buscar alumno por legajo', green);
       textcolor(green);
       gotoxy(16, 9);
       writeln('-------------------------------------------------');
       textcolor(green);
-      gotoxy(20, 11); write('Legajo del alumno ');
-      gotoxy(20, 12); write('0 VOLVER: ');
+      gotoxy(35, 15); write(' (0 Salir) ');
+      gotoxy(20, 11); write('Legajo del alumno: ');
       textcolor(White);
       readln(legajo);
       if legajo <> '0' then
       begin
-         seguir_validacion := true;
-         while not(legajo_valido(legajo)) and seguir_validacion do
+         while not(legajo_valido(legajo)) do
          begin
-            textcolor(LightRed);
-            gotoxy(20, 13); write('Legajo invalido. Reintente  ');
-            gotoxy(20, 14); write('0 VOLVER:  ');
+            clrscr;
+            DibujarMarco(15, 6, 55, 12, Red);
+            textcolor(Red);
+            gotoxy(27, 7); write('Legajo invalido.');
+            textcolor(Red);
+            gotoxy(16,8);
+            writeln('---------------------------------------');
+            textcolor(Red);
+            gotoxy(20, 10); write('Reintente: ');
             textcolor(White);
             readln(legajo);
-            if legajo = '0' then seguir_validacion := false;
          end;
-         if (legajo <> '0') and seguir_validacion then
-         begin
             acceso_concedido := false;
             if buscar_legajo(a, arb_leg, arb_ayn, legajo) then
             begin
@@ -150,18 +155,25 @@ begin
                   readln(opcion);
 
                   case opcion of
-                     1: begin clrscr; consulta_alumnos(a, arb_leg, arb_ayn, legajo); end;
-                     2: begin clrscr; baja_alumnos(a, arb_leg, arb_ayn, legajo); end;
-                     3: begin clrscr; modificar_alumno(a, arb_leg, arb_ayn, legajo); end;
+                     1: begin
+                        clrscr;
+                        consulta_alumnos(a, arb_leg, arb_ayn, legajo);
+                        end;
+                     2: begin
+                        clrscr;
+                        baja_alumnos(a, arb_leg, arb_ayn, legajo);
+                        end;
+                     3: begin
+                        clrscr; modificar_alumno(a, arb_leg, arb_ayn, legajo);
+                        end;
                      0: begin
                            seguir_alumno := false;
                            legajo := '0';
                         end;
+                     end;
                   end;
-               end;
             end;
          end;
-      end;
    until legajo = '0';
 end;
 
@@ -179,12 +191,12 @@ begin
       TextoCentrado(6, 'SEGUIMIENTO Y EVALUACIONES', White);
       TextoCentrado(7, 'Gestion de Evaluaciones Academicas', green);
       textcolor(green);
-      gotoxy(16, 9); 
+      gotoxy(16, 9);
       writeln('-------------------------------------------------');
       textcolor(White);
       gotoxy(25, 11); write('1.'); textcolor(LightGray); write('  Alta de una evaluacion');
       gotoxy(25, 13); textcolor(White); write('2.'); textcolor(LightGray); write('  Modificacion de una evaluacion');
-      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Consulta de una evaluacion'); 
+      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Consulta de una evaluacion');
       gotoxy(25, 17); textcolor(White); write('0.'); textcolor(LightGray); write('  Volver al menu principal');
       TextoCentrado(24, 'Ingrese el numero de opcion: ', white);
       readln(opcion);
@@ -223,7 +235,7 @@ begin
    until opcion = 0;
 end;
 
-procedure menu_listados(var a: t_archivo_alumnos; var arb_ayn: t_punt; var arb_ev: t_punt);
+procedure menu_listados(var a: t_archivo_alumnos; var arb_ayn: t_punt; var arb_ev: t_punt;var e:t_archivo_evaluaciones);
 var
    opcion: byte;
    legajo: string;
@@ -235,12 +247,12 @@ begin
       TextoCentrado(6, 'GENERACION DE LISTADOS', White);
       TextoCentrado(7, 'Reportes y Consultas del Sistema', green);
       textcolor(green);
-      gotoxy(16, 9); 
+      gotoxy(16, 9);
       writeln('-------------------------------------------------');
       textcolor(White);
       gotoxy(25, 11); write('1.'); textcolor(white); write('  Listado de alumnos');
       gotoxy(25, 13); textcolor(White); write('2.'); textcolor(LightGray); write('  Listado de evaluaciones');
-      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Listado por discapacidades'); 
+      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Listado por discapacidades');
       gotoxy(25, 17); textcolor(White); write('0.'); textcolor(LightGray); write('  Volver al menu principal');
       TextoCentrado(24, 'Ingrese el numero de opcion: ', white);
       readln(opcion);
@@ -253,7 +265,7 @@ begin
              clrscr;
              legajo := ingresar_legajo;
              if legajo <> '0' then
-                listado_ev(arb_ev, legajo);
+                listado_ev(arb_ev,legajo,e);
            end;
         3: begin
              clrscr;
@@ -274,12 +286,12 @@ begin
       TextoCentrado(6, 'ESTADISTICAS GENERALES', White);
       TextoCentrado(7, 'Analisis y Reportes Estadisticos', green);
       textcolor(green);
-      gotoxy(16, 9); 
+      gotoxy(16, 9);
       writeln('-------------------------------------------------');
       textcolor(White);
       gotoxy(25, 11); write('1.'); textcolor(LightGray); write('  Distribucion de evaluaciones por discapacidades');
       gotoxy(25, 13); textcolor(White); write('2.'); textcolor(LightGray); write('  Discapacidades con mayor grado de dificultad');
-      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Discapacidades con mayor numero de alumnos'); 
+      gotoxy(25, 15); textcolor(White); write('3.'); textcolor(LightGray); write('  Discapacidades con mayor numero de alumnos');
       gotoxy(25, 17); textcolor(White); write('0.'); textcolor(LightGray); write('  Volver al menu principal');
       TextoCentrado(24, 'Ingrese el numero de opcion: ', white);
       readln(opcion);
@@ -300,4 +312,4 @@ begin
    until opcion = 0;
    writeln('Gracias por usar el sistema. ¡Hasta luego!');
 end;
-end.      
+end.    

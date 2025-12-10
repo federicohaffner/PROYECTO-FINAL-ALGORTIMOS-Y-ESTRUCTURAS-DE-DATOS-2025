@@ -3,10 +3,7 @@ unit usa_archivo;
 
 interface
 uses
-    SysUtils,
-    archivos,
-    unit_arbol,
-    usa_arbol;
+    SysUtils, archivos, unit_arbol, usa_arbol;
 
 function archivo_vacio_1 (var archivo_1:t_archivo_alumnos): boolean;
 function archivo_vacio_2 (var archivo_2:t_archivo_evaluaciones): boolean;
@@ -121,4 +118,4 @@ begin
    end;
 end;
 
-end.                          
+end.     

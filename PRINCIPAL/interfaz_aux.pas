@@ -24,14 +24,13 @@ begin
     gotoxy(x2, i); write('|');
   end;
 end;
-
 procedure TextoCentrado(y: integer; texto: string; color: byte);
 var
   x: integer;
 begin
-  x := (80 - length(texto)) div 2; 
+  x := (80 - length(texto)) div 2;
   textcolor(color);
   gotoxy(x, y);
   write(texto);
 end;
-end.           
+end.   
