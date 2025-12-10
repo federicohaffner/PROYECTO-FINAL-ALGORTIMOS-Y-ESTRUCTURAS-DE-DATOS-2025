@@ -37,7 +37,9 @@ begin
        clrscr;
        DibujarMarco(15, 8, 65, 14, Green);
        textcolor(LightRed);
-       gotoxy(20, 11); write('Legajo invalido. Intente nuevamente: ');
+       gotoxy(20, 11); write('Legajo invalido.');
+          textcolor(LightRed);
+       gotoxy(20, 12); write('Intente nuevamente: ');
        textcolor(White);
        readln(legajo);
      end;
@@ -61,6 +63,8 @@ begin
           DibujarMarco(15, 8, 65, 14, Green);
           textcolor(LightRed);
           gotoxy(20, 11); write('Nombre invalido. Intente nuevamente: ');
+          textcolor(LightRed);
+          gotoxy(20, 12); write('Intente nuevamente: ');
           textcolor(White);
           readln(ayn);
      end;
@@ -457,7 +461,9 @@ begin
                               clrscr;
                               DibujarMarco(15, 8, 65, 14, Green);
                               textcolor(LightRed);
-                              gotoxy(20, 13); write('Nombre invalido. Reintente: ');
+                              gotoxy(20, 13); write('Nombre invalido.');
+                              textcolor(LightRed);
+                              gotoxy(20, 14); write('Reintente: ');
                               textcolor(White);
                               readln(ayn);
                          end;
