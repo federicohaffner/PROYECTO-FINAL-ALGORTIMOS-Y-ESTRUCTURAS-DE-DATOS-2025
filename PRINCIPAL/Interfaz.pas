@@ -71,7 +71,7 @@ begin
       gotoxy(16, 9);
       writeln('-------------------------------------------------');
       textcolor(green);
-      gotoxy(20, 11); write('Legajo del alumno ');
+      gotoxy(20, 11); write('Legajo del alumno: ');
       gotoxy(20, 12); write('0 VOLVER: ');
       textcolor(White);
       readln(legajo);
@@ -80,9 +80,13 @@ begin
          seguir_validacion := true;
          while not(legajo_valido(legajo)) and seguir_validacion do
          begin
+            clrscr;
+            DibujarMarco(15, 10, 65, 16, green);
             textcolor(LightRed);
-            gotoxy(20, 13); write('Legajo invalido. Reintente  ');
-            gotoxy(20, 14); write('0 VOLVER:  ');
+            gotoxy(20, 11); write('Legajo invalido.');
+            textcolor(LightRed);
+            gotoxy(20,12); write('Reintente  ');
+            gotoxy(20, 13); write('0 VOLVER:  ');
             textcolor(White);
             readln(legajo);
             if legajo = '0' then seguir_validacion := false;

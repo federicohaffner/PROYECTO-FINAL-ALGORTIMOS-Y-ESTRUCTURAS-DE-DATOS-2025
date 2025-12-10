@@ -47,7 +47,9 @@ begin
      clrscr;
      DibujarMarco(15, 5, 65, 18, LightGreen);
      textcolor(LightRed);
-     gotoxy(20, 15); write('Numero invalido. Reintente (1-5): ');
+     gotoxy(20, 15); write('Numero invalido.');
+     textcolor(LigthRed); 
+     gotoxy(20,16); write('Reintente (1-5): ');
      textcolor(White);
      readln(disc);
   end;
@@ -72,9 +74,11 @@ begin
        DibujarMarco(20, 10, 60, 15, LightGreen);
        TextoCentrado(11, 'INGRESO DE LEGAJO', White);
        textcolor(LightRed);
-       gotoxy(25, 13); write('Legajo invalido. Reintente ');
+       gotoxy(25, 13); write('Legajo invalido.');
+        textcolor(LightRed);
+       gotoxy(25, 14); write('Reintente: ');
        textcolor(LightRed);
-       gotoxy(22, 14); write('0 VOLVER: ');
+       gotoxy(22, 15); write('0 VOLVER: ');
        textcolor(White);
        readln(l);
   end;
@@ -139,7 +143,9 @@ begin
             while not(valoracion_valida(val)) do
             begin
                textcolor(LightRed);
-               gotoxy(15, linea + 1); write('Valor invalido. Ingrese 0-4: ');
+               gotoxy(15, linea + 1); write('Valor invalido.');
+               textcolor(LightRed);
+               gotoxy(15, linea + 2); write('Ingrese 0-4: ');
                textcolor(White);
                readln(val);
             end;

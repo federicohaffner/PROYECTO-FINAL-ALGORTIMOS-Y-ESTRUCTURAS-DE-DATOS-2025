@@ -200,8 +200,6 @@ begin
 
       if reg.estado = true then
       begin
-           gotoxy(10, linea); write(reg.ayn);
-           gotoxy(50, linea); write(reg.legajo);
            linea := linea + 1;
            if linea > 22 then 
            begin
