@@ -87,7 +87,9 @@ begin
        clrscr;
        DibujarMarco(15, 8, 65, 14, Green);
        textcolor(LightRed);
-       gotoxy(20, 11); write('Fecha invalida. Intente nuevamente (AAAA/MM/DD): ');
+       gotoxy(20, 11); write('Fecha invalida.');
+          textcolor(LightRed);
+       gotoxy(20, 12); write('Reintente (AAAA/MM/DD): ');
        textcolor(White);
        readln(f);
      end;
@@ -453,7 +455,7 @@ begin
                          textcolor(LightGray);
                          write(y.ayn);
                          textcolor(LightGreen);
-                         gotoxy(20, 13); write('Nuevo valor : ');
+                         gotoxy(20, 13); write('Nuevo valor: ');
                          textcolor(White);
                          readln(ayn);
                          while not(nombre_valido(ayn)) do
@@ -493,7 +495,9 @@ begin
                               clrscr;
                               DibujarMarco(15, 8, 65, 14, Green);
                               textcolor(LightRed);
-                              gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
+                              gotoxy(20, 13); write('Fecha invalida. ');
+                              textcolor(LightRed);
+                              gotoxy(20, 14); write('Reintente (AAAA/MM/DD): ');
                               textcolor(White);
                               readln(fecha);
                          end;

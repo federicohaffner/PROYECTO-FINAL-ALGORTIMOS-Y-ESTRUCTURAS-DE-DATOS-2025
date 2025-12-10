@@ -72,7 +72,7 @@ begin
       writeln('-------------------------------------------------');
       textcolor(green);
       gotoxy(20, 11); write('Legajo del alumno: ');
-      gotoxy(20, 12); write('0 VOLVER: ');
+      gotoxy(20, 12); write('0- VOLVER: ');
       textcolor(White);
       readln(legajo);
       if legajo <> '0' then
@@ -86,7 +86,7 @@ begin
             gotoxy(20, 11); write('Legajo invalido.');
             textcolor(LightRed);
             gotoxy(20,12); write('Reintente  ');
-            gotoxy(20, 13); write('0 VOLVER:  ');
+            gotoxy(20, 13); write('0- VOLVER:  ');
             textcolor(White);
             readln(legajo);
             if legajo = '0' then seguir_validacion := false;

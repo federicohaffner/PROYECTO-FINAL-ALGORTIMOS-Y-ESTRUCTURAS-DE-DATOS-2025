@@ -27,30 +27,40 @@ begin
     gotoxy(16, 9);
     writeln('-------------------------------------------------');
     textcolor(LightGreen);
-    gotoxy(20, 11); write('Fecha de inicio (AAAA/MM/DD): ');
+    gotoxy(20, 11); write('Fecha de inicio (AAAA/MM/DD) ');
+    textcolor(LightGreen);
+    gotoxy(20, 12); write('0- VOLVER:');
     textcolor(White);
     readln(fecha_inicio);
-    while not(fecha_valida(fecha_inicio)) do
+    if fecha_inicio <> '0' then 
     begin
-        clrscr;
-        DibujarMarco(15, 8, 65, 14, LightGreen);
-        textcolor(LightRed);
-        gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
-        textcolor(White);
-        readln(fecha_inicio);
-    end;
-    textcolor(LightGreen);
-    gotoxy(20, 13); write('Fecha final (AAAA/MM/DD)  : ');
-    textcolor(White);
-    readln(fecha_final);
-    while not(fecha_valida(fecha_final)) do
-    begin
-        clrscr;
-        DibujarMarco(15, 8, 65, 14, LightGreen);
-        textcolor(LightRed);
-        gotoxy(20, 13); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
+        while not(fecha_valida(fecha_inicio)) do
+        begin
+            clrscr;
+            DibujarMarco(15, 8, 65, 14, LightGreen);
+            textcolor(LightRed);
+            gotoxy(20, 13); write('Fecha invalida.');
+            textcolor(LightRed);
+            gotoxy(20, 14); write('Reintente (AAAA/MM/DD): ');
+            textcolor(White);
+            readln(fecha_inicio);
+        end;
+
+        textcolor(LightGreen);
+        gotoxy(20, 13); write('Fecha final (AAAA/MM/DD)  : ');
         textcolor(White);
         readln(fecha_final);
+        while not(fecha_valida(fecha_final)) do
+        begin
+            clrscr;
+            DibujarMarco(15, 8, 65, 14, LightGreen);
+            textcolor(LightRed);
+            gotoxy(20, 13); write('Fecha invalida.');
+            textcolor(LightRed);
+            gotoxy(20, 14); write('Reintente (AAAA/MM/DD): ');
+            textcolor(White);
+            readln(fecha_final);
+        end;
     end;
     textcolor(LightGreen);
     TextoCentrado(15, 'Fechas cargadas correctamente', LightGreen);

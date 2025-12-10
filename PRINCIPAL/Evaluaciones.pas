@@ -65,7 +65,7 @@ begin
   textcolor(LightGreen);
   gotoxy(25, 13); write('Legajo (8 digitos) ');
   textcolor(LightGreen);
-  gotoxy(22, 14); write('0 VOLVER: ');
+  gotoxy(22, 14); write('0- VOLVER: ');
   textcolor(White);
   readln(l);
   while not legajo_valido(l) and (l <> '0') do
@@ -78,7 +78,7 @@ begin
         textcolor(LightRed);
        gotoxy(25, 14); write('Reintente: ');
        textcolor(LightRed);
-       gotoxy(22, 15); write('0 VOLVER: ');
+       gotoxy(22, 15); write('0- VOLVER: ');
        textcolor(White);
        readln(l);
   end;
@@ -95,7 +95,7 @@ begin
   textcolor(LightGreen);
   gotoxy(22, 13); write('Fecha (AAAA/MM/DD) ');
   textcolor(LightGreen);
-  gotoxy(22, 14); write('0 VOLVER: ');
+  gotoxy(22, 14); write('0- VOLVER: ');
   textcolor(White);
   readln(f);
   while not (fecha_valida(f)) and (f <> '0') do
@@ -104,9 +104,11 @@ begin
     DibujarMarco(18, 10, 62, 15, LightGreen);
     TextoCentrado(11, 'INGRESO DE FECHA', White);
     textcolor(LightRed);
-    gotoxy(22, 13); write('Fecha invalida. Reintente (AAAA/MM/DD) ');
+    gotoxy(22, 13); write('Fecha invalida.');
     textcolor(LightRed);
-    gotoxy(22, 14); write('0 VOLVER: ');
+    gotoxy(22, 14); write('Reintente (AAAA/MM/DD): ');
+    textcolor(LightRed);
+    gotoxy(22, 14); write('0- VOLVER: ');
     textcolor(White);
     readln(f);
   end;
@@ -476,32 +478,40 @@ begin
                     textcolor(LightGray);
                     write(y.fecha_ev);
                     textcolor(LightGreen);
-                    gotoxy(20, 13); write('Nueva fecha (AAAA/MM/DD): ');
+                    gotoxy(20, 13); write('Nueva fecha (AAAA/MM/DD) ');
+                    textcolor(LightGreen);
+                    gotoxy(20, 13); write('0- VOLVER: ');
                     textcolor(White);
                     readln(nueva_fecha);
-
-                    while not(fecha_valida(nueva_fecha)) do
+                    if nueva_fecha <> 0 then
                     begin
-                        clrscr;
-                        DibujarMarco(15, 9, 65, 16, LightGreen);
-                        textcolor(LightRed);
-                        gotoxy(20, 14); write('Fecha invalida. Reintente (AAAA/MM/DD): ');
-                        gotoxy(47, 14);
-                        textcolor(White);
-                        readln(nueva_fecha);
+
+                        while not(fecha_valida(nueva_fecha)) do
+                        begin
+                            clrscr;
+                            DibujarMarco(15, 9, 65, 16, LightGreen);
+                            textcolor(LightRed);
+                            gotoxy(20, 14); write('Fecha invalida.');
+                            textcolor(LightRed);
+                            gotoxy(20, 15); write('Reintente (AAAA/MM/DD): ');
+                            gotoxy(47, 16);
+                            textcolor(White);
+                            readln(nueva_fecha);
+                        end;
+
+                        gotoxy(20, 14); write('                                          ');
+                        y.fecha_ev := nueva_fecha;
+                        x.clave := aux_clave_vieja;
+                        suprime(arb_ev, x);
+                        aux_clave_vieja := nueva_fecha + ' ' + legajo;
+                        dato_nuevo.clave := aux_clave_vieja;
+                        dato_nuevo.pos_arch := pos;
+                        agregar_arbol_eval(arb_ev, dato_nuevo);
+                        escribir_archivo_2(e, pos, y);
+                        textcolor(LightGreen);
+                        TextoCentrado(15, 'Fecha actualizada!', LightGreen);
+                        readkey;
                     end;
-                    gotoxy(20, 14); write('                                          ');
-                    y.fecha_ev := nueva_fecha;
-                    x.clave := aux_clave_vieja;
-                    suprime(arb_ev, x);
-                    aux_clave_vieja := nueva_fecha + ' ' + legajo;
-                    dato_nuevo.clave := aux_clave_vieja;
-                    dato_nuevo.pos_arch := pos;
-                    agregar_arbol_eval(arb_ev, dato_nuevo);
-                    escribir_archivo_2(e, pos, y);
-                    textcolor(LightGreen);
-                    TextoCentrado(15, 'Fecha actualizada!', LightGreen);
-                    readkey;
                    end;
                 2: begin
                     repeat
