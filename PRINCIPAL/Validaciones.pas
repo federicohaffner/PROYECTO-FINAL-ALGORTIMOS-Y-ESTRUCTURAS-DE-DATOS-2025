@@ -98,5 +98,40 @@ begin
       valoracion_valida := false;
 end;
 
-
-end.                                                     
+function nombre_valido(nombre: string): boolean;
+var
+  i, espacios, pos_espacio: integer;
+  palabra1, palabra2: string;
+begin
+  nombre_valido := false;
+  if Length(nombre) > 0 then
+  begin
+    if (nombre[1] <> ' ') and (nombre[Length(nombre)] <> ' ') then
+    begin
+      if escadena(nombre) then
+      begin
+        espacios := 0;
+        pos_espacio := 0;
+        for i := 1 to Length(nombre) do
+        begin
+          if nombre[i] = ' ' then
+          begin
+            espacios := espacios + 1;
+            if espacios = 1 then
+              pos_espacio := i;
+          end;
+        end;
+        if espacios = 1 then
+        begin
+          palabra1 := Copy(nombre, 1, pos_espacio - 1);
+          palabra2 := Copy(nombre, pos_espacio + 1, Length(nombre) - pos_espacio);
+          if (palabra1[1] in ['A'..'Z']) and (palabra2[1] in ['A'..'Z']) then
+          begin
+            nombre_valido := true;
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
+end.

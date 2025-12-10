@@ -6,7 +6,7 @@ uses
     crt, SysUtils, Classes, unit_arbol, archivos, validaciones, usa_arbol, interfaz_aux;
 
 procedure listado_alumnos(arb_ayn:t_punt; var a: t_archivo_alumnos);
-procedure listado_ev (arb_ev:t_punt; legajo:string);
+procedure listado_ev (arb_ev:t_punt; legajo:string; var e: t_archivo_evaluaciones);
 procedure listado_discapacidad (arb_ayn:t_punt; disc:byte; var arch:t_archivo_alumnos  );
     
 implementation
@@ -51,7 +51,7 @@ begin
     end;
 end;
 
-procedure listado_ev (arb_ev:t_punt; legajo:string);
+procedure listado_ev (arb_ev:t_punt; legajo:string; var e: t_archivo_evaluaciones);
 var
     linea: integer;
 begin
@@ -64,7 +64,7 @@ begin
         gotoxy(28, 4); write('Legajo del alumno: ', legajo);
         textcolor(LightGreen);
         gotoxy(6, 5);
-        writeln('--------------------------------------------------------------------');  
+        writeln('--------------------------------------------------------------------');
         textcolor(LightGreen);
         gotoxy(10, 6); write('FECHA');
         gotoxy(30, 6); write('OBSERVACIONES');
@@ -72,10 +72,8 @@ begin
         textcolor(LightGreen);
         gotoxy(6, 7);
         writeln('--------------------------------------------------------------------');
-        textcolor(LightGreen);
-        gotoxy(10, 8);
         linea := 8;
-        INORDEN_leg(arb_ev, legajo, linea);
+        inorden_leg(arb_ev, legajo, linea, e);
         textcolor(LightGreen);
         gotoxy(6, 23);
         writeln('--------------------------------------------------------------------');
@@ -86,12 +84,8 @@ begin
     else
     begin
         DibujarMarco(20, 10, 60, 14, LightGreen);
-        textcolor(LightRed);
-        TextoCentrado(11, 'SIN DATOS', White);
-        textcolor(LightGray);
-        TextoCentrado(12, 'No hay evaluaciones en el sistema', LightGray);
-        textcolor(White);
-        gotoxy(25, 13); write('Presione una tecla...');
+        TextoCentrado(11, 'SIN DATOS', LightRed);
+        TextoCentrado(12, 'No hay evaluaciones cargadas', LightGray);
         readkey;
     end;
 end;

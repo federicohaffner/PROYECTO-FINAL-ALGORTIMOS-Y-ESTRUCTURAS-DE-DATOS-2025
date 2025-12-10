@@ -45,6 +45,8 @@ begin
         4:menu_estadisticas(a, e, arb_ev, arb_leg);
       end;
    until opcion=0;
+   TextoCentrado(28, 'Gracias por usar el sistema. Hasta luego!', LightGreen);
+   readkey;
    cerrar_archivo_1(a);
    cerrar_archivo_2(e);
 end;
@@ -298,6 +300,5 @@ begin
            end;
       end;
    until opcion = 0;
-   writeln('Gracias por usar el sistema. ¡Hasta luego!');
 end;
 end.      

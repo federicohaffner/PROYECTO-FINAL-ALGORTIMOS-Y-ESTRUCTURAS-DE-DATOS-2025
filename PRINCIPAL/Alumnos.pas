@@ -55,7 +55,7 @@ begin
      gotoxy(20, 11); write('Apellido y Nombre: ');
      textcolor(White);
      readln(ayn);
-     while not(escadena(ayn)) do
+     while not(nombre_valido(ayn)) do
      begin
           clrscr;
           DibujarMarco(15, 8, 65, 14, Green);
@@ -98,7 +98,7 @@ begin
      clrscr;
      DibujarMarco(10, 4, 70, 22, Green);
      TextoCentrado(5, 'REGISTRO DE DISCAPACIDADES', White);
-     TextoCentrado(6, 'Marque V (Verdadero) o F (Falso)', LightGreen);
+     TextoCentrado(6, 'Marque (S/N):', LightGreen);
      textcolor(Green);
      gotoxy(11, 7);
      writeln('----------------------------------------------------------');
@@ -109,15 +109,15 @@ begin
        write(discapacidades[i], ': ');
        textcolor(White);
        readln(op);
-       while (upcase(op) <> 'V') and (upcase(op) <> 'F') do
+       while (upcase(op) <> 'S') and (upcase(op) <> 'N') do
        begin
          textcolor(LightRed);
          gotoxy(15, 9 + (i * 2));
-         write('Solo V o F. Reintente: ');
+         write('Reintente (S/N): ');
          textcolor(White);
          readln(op);
        end;
-       if upcase(op) = 'V' then
+       if upcase(op) = 'S' then
           r.discapacidades[i] := true
        else
            r.discapacidades[i] := false;
@@ -452,7 +452,7 @@ begin
                          gotoxy(20, 13); write('Nuevo valor : ');
                          textcolor(White);
                          readln(ayn);
-                         while not(escadena(ayn)) do
+                         while not(nombre_valido(ayn)) do
                          begin
                               clrscr;
                               DibujarMarco(15, 8, 65, 14, Green);
@@ -501,7 +501,7 @@ begin
                          clrscr;
                          DibujarMarco(10, 4, 70, 22, Green);
                          TextoCentrado(5, 'MODIFICAR DISCAPACIDADES', White);
-                         TextoCentrado(6, 'Marque V (Verdadero) o F (Falso)', LightGreen);
+                         TextoCentrado(6, 'Marque (S/N):', LightGreen);
                          textcolor(Green);
                          gotoxy(11, 7);
                          writeln('----------------------------------------------------------');
@@ -510,18 +510,18 @@ begin
                          begin
                               textcolor(LightGray);
                               gotoxy(15, 8 + (i * 2));
-                              write(DISCAPACIDADES[i], ' (V/F): ');
+                              write(DISCAPACIDADES[i], ' (S/N): ');
                               textcolor(White);
                               readln(disc);
-                              while (upcase(disc) <> 'V') and (upcase(disc) <> 'F') do
+                              while (upcase(disc) <> 'S') and (upcase(disc) <> 'N') do
                               begin
                                    textcolor(LightRed);
                                    gotoxy(15, 9 + (i * 2));
-                                   write('Solo V o F. Reintente: ');
+                                   write('Reintente (S/N): ');
                                    textcolor(White);
                                    readln(disc);
                               end;
-                              if upcase(disc) = 'V' then
+                              if upcase(disc) = 'S' then
                                    y.discapacidades[i] := true
                               else
                                    y.discapacidades[i] := false;

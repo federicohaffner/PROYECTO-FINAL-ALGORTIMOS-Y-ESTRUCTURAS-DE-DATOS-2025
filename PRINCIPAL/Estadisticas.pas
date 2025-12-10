@@ -142,7 +142,7 @@ begin
         writeln('--------------------------------------------------------------');
         textcolor(LightGreen);
         gotoxy(12, 8); write('DISCAPACIDAD');
-        gotoxy(50, 8); write('EVALUACIONES');
+        gotoxy(55, 8); write('EVALUACIONES');
         textcolor(LightGreen);
         gotoxy(9, 9);
         writeln('--------------------------------------------------------------');
@@ -154,7 +154,7 @@ begin
             textcolor(LightGray);
             gotoxy(12, 10 + i); write(DISCAPACIDADES[i]);
             textcolor(White);
-            gotoxy(54, 10 + i); write(contadores[i]);
+            gotoxy(60, 10 + i); write(contadores[i]);
         end;
         textcolor(LightGreen);
         gotoxy(9, 16);
@@ -275,7 +275,7 @@ begin
     writeln('--------------------------------------------------------------------');
     textcolor(LightGreen);
     gotoxy(8, 8);  write('RANK');
-    gotoxy(18, 8); write('DISCAPACIDAD');
+    gotoxy(14, 8); write('DISCAPACIDAD');
     gotoxy(60, 8); write('PUNTOS');
 
     textcolor(LightGreen);
@@ -290,7 +290,7 @@ begin
             else textcolor(LightGray);
         end;
         gotoxy(10, 10 + i); write(i, '.');
-        gotoxy(18, 10 + i); write(Copy(vec_nombres[i], 1, 40));
+        gotoxy(14, 10 + i); write(Copy(vec_nombres[i], 1, 45));
         textcolor(White);
         gotoxy(62, 10 + i); write(vec_grados[i]);
     end;
@@ -345,8 +345,8 @@ begin
         writeln('--------------------------------------------------------------------');
         textcolor(LightGreen);
         gotoxy(10, 8); write('DISCAPACIDAD');
-        gotoxy(48, 8); write('CANTIDAD');
-        gotoxy(60, 8); write('PORCENTAJE'); 
+        gotoxy(53, 8); write('CANTIDAD');
+        gotoxy(64, 8); write('PORCENTAJE'); 
         textcolor(LightGreen);
         gotoxy(6, 9);
         writeln('--------------------------------------------------------------------'); 
@@ -356,7 +356,7 @@ begin
             gotoxy(10, 10 + i); write(DISCAPACIDADES[i]);
             
             textcolor(White);
-            gotoxy(51, 10 + i); write(contadores[i]);
+            gotoxy(56, 10 + i); write(contadores[i]);
             
             porcentaje := (contadores[i] / activos) * 100;
             
@@ -367,7 +367,7 @@ begin
             else
                 textcolor(LightGreen);
                 
-            gotoxy(62, 10 + i); write(porcentaje:0:2, '%');
+            gotoxy(64, 10 + i); write(porcentaje:0:2, '%');
         end; 
         textcolor(LightGreen);
         gotoxy(6, 16);
