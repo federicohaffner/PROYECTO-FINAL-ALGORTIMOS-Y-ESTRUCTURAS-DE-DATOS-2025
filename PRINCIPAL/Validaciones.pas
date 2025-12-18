@@ -3,12 +3,13 @@ unit Validaciones;
 
 interface
 uses
-   SysUtils, Classes;
+   SysUtils, Classes, Crt;
+   
 function legajo_valido(legajo:string):boolean;
 function escadena(ayn: string): boolean;
-function fecha_valida(fecha:string):boolean; {AAAA/MM/DD}
 function valoracion_valida(valoracion:byte):boolean;
 function tiene_formato_fecha(f: string): boolean;
+function fecha_valida(fecha:string):boolean; {AAAA/MM/DD}
 function nombre_valido(nombre: string): boolean;
 
 implementation
@@ -71,33 +72,68 @@ end;
 function fecha_valida(fecha:string):boolean; {AAAA/MM/DD}
 var
    dia, mes, anio: integer;
+   hoy_dia, hoy_mes, hoy_anio: word;
 begin
    fecha_valida := false;
+   DecodeDate(Date, hoy_anio, hoy_mes, hoy_dia);
    if tiene_formato_fecha(fecha) then
    begin
-     if TryStrToInt(copy(fecha, 1, 4), anio) and TryStrToInt(copy(fecha, 6, 2), mes) and TryStrToInt(copy(fecha, 9, 2), dia)  then
-     begin
-        if (anio >= 1900) and (anio <= 2026) then
-        begin
-           if (mes >= 1) and (mes <= 12) then
-           begin
-              case mes of
-                 1,3,5,7,8,10,12: if (dia >= 1) and (dia <= 31) then
-                                   fecha_valida := true;
-                 4,6,9,11: if (dia >= 1) and (dia <= 30) then
-                               fecha_valida := true;
-                 2: if (anio mod 4 = 0) then
+      if TryStrToInt(copy(fecha, 1, 4), anio) and TryStrToInt(copy(fecha, 6, 2), mes) and TryStrToInt(copy(fecha, 9, 2), dia) then
+      begin
+         if (anio >= 1900) and (anio <= hoy_anio) then
+         begin
+            if (mes >= 1) and (mes <= 12) then
+            begin
+               case mes of
+                  1,3,5,7,8,10,12: 
+                     if (dia >= 1) and (dia <= 31) then
                      begin
-                       if (dia >= 1) and (dia <= 29) then
-                          fecha_valida := true;
+                        if (anio < hoy_anio) then
+                           fecha_valida := true
+                        else if (anio = hoy_anio) and (mes < hoy_mes) then
+                           fecha_valida := true
+                        else if (anio = hoy_anio) and (mes = hoy_mes) and (dia <= hoy_dia) then
+                           fecha_valida := true;
+                     end;
+                  4,6,9,11: 
+                     if (dia >= 1) and (dia <= 30) then
+                     begin
+                        if (anio < hoy_anio) then
+                           fecha_valida := true
+                        else if (anio = hoy_anio) and (mes < hoy_mes) then
+                           fecha_valida := true
+                        else if (anio = hoy_anio) and (mes = hoy_mes) and (dia <= hoy_dia) then
+                           fecha_valida := true;
+                     end;
+                  2: 
+                     if (anio mod 4 = 0) then
+                     begin
+                        if (dia >= 1) and (dia <= 29) then
+                        begin
+                           if (anio < hoy_anio) then
+                              fecha_valida := true
+                           else if (anio = hoy_anio) and (mes < hoy_mes) then
+                              fecha_valida := true
+                           else if (anio = hoy_anio) and (mes = hoy_mes) and (dia <= hoy_dia) then
+                              fecha_valida := true;
+                        end;
                      end
-                    else
-                       if (dia >= 1) and (dia <= 28) then
-                          fecha_valida := true;
-              end;
-           end;
-        end;
-     end;
+                     else
+                     begin
+                        if (dia >= 1) and (dia <= 28) then
+                        begin
+                           if (anio < hoy_anio) then
+                              fecha_valida := true
+                           else if (anio = hoy_anio) and (mes < hoy_mes) then
+                              fecha_valida := true
+                           else if (anio = hoy_anio) and (mes = hoy_mes) and (dia <= hoy_dia) then
+                              fecha_valida := true;
+                        end;
+                     end;
+               end; 
+            end;
+         end;
+      end;
    end;
 end;
 

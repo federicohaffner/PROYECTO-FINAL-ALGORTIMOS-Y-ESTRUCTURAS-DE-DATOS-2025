@@ -2,49 +2,24 @@ unit Alumnos;
 {$mode ObjFPC}{$H+}
 interface
 uses
-     Classes, SysUtils, archivos, usa_arbol, Validaciones, unit_arbol, usa_archivo, interfaz_aux, crt;
+     Classes, SysUtils, Archivos, Ua_arbol, Validaciones, Unit_arbol, Usa_archivo, Interfaz_aux, Crt;
 
-procedure cargar_legajo(var r:t_dato_alumnos);
 procedure cargar_ayn(var r:t_dato_alumnos);
-procedure fecha_nac (var r:t_dato_alumnos);
-procedure tiene_disc (var r:t_dato_alumnos);
-procedure agregar_archivo_alumno (var a:t_archivo_alumnos; legajo:string; pos:integer; var r:t_dato_alumnos);
-procedure alta_alumnos (var a: t_archivo_alumnos; legajo: string; var arb_leg: t_punt; var arb_ayn: t_punt);
-procedure mostrar_registro_al (x:t_dato_alumnos);
+procedure cargar_fecha_nac (var r:t_dato_alumnos);
+procedure cargar_disc (var r:t_dato_alumnos);
 procedure cargar_registro (var r:t_dato_alumnos; legajo: string);
+procedure mostrar_registro_al (x:t_dato_alumnos);
+procedure agregar_archivo_alumno (var a:t_archivo_alumnos; legajo:string; pos:integer; var r:t_dato_alumnos);
 function buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn: t_punt ; legajo:string):boolean;
+procedure alta_alumnos (var a: t_archivo_alumnos; legajo: string; var arb_leg: t_punt; var arb_ayn: t_punt);
+procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 procedure consulta_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 procedure modificar_alumno(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
-procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 procedure genera_arboles_alum(var a:t_archivo_alumnos; var raiz, raiz_2:t_punt);
 procedure carga_arbol_alum(VAR raiz:t_punt; id: string; pos: integer);
 
 implementation
 
-procedure cargar_legajo(var r:t_dato_alumnos);
-var
-   legajo: string[10];
-begin
-     clrscr;
-     DibujarMarco(15, 8, 65, 14, Green);
-     TextoCentrado(9, 'INGRESO DE LEGAJO', White);
-     textcolor(LightGreen);
-     gotoxy(20, 11); write('Legajo del alumno: ');
-     textcolor(White);
-     readln(legajo);
-     while not(legajo_valido(legajo)) do
-     begin
-       clrscr;
-       DibujarMarco(15, 8, 65, 14, Green);
-       textcolor(LightRed);
-       gotoxy(20, 11); write('Legajo invalido.');
-       textcolor(LightRed);
-       gotoxy(20, 12); write('Intente nuevamente: ');
-       textcolor(White);
-       readln(legajo);
-     end;
-     r.legajo := legajo;
-end;
 
 procedure cargar_ayn(var r:t_dato_alumnos);
 var
@@ -71,7 +46,7 @@ begin
      r.ayn := ayn;
 end;
 
-procedure fecha_nac (var r:t_dato_alumnos);
+procedure cargar_fecha_nac (var r:t_dato_alumnos);
 var
    f: string[10];
 begin
@@ -96,7 +71,7 @@ begin
      r.fecha_nac := f;
 end;
 
-procedure tiene_disc (var r:t_dato_alumnos);
+procedure cargar_disc (var r:t_dato_alumnos);
 var
    i:byte;
    op: char;
@@ -128,6 +103,15 @@ begin
        else
            r.discapacidades[i] := false;
      end;
+end;
+
+procedure cargar_registro (var r:t_dato_alumnos; legajo: string);
+begin
+     r.legajo := legajo;
+     cargar_ayn(r);
+     fecha_nac(r);
+     tiene_disc(r);
+     r.estado := true;
 end;
 
 procedure mostrar_registro_al (x:t_dato_alumnos);
@@ -189,14 +173,7 @@ begin
      readln;
 end;
 
-procedure cargar_registro (var r:t_dato_alumnos; legajo: string);
-begin
-     r.legajo := legajo;
-     cargar_ayn(r);
-     fecha_nac(r);
-     tiene_disc(r);
-     r.estado := true;
-end;
+
 
 procedure agregar_archivo_alumno (var a:t_archivo_alumnos; legajo:string; pos:integer; var r: t_dato_alumnos);
 begin
@@ -204,6 +181,29 @@ begin
      seek(a, pos);
      write(a, r);
 end;
+
+function buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt; legajo:string):boolean;
+var
+     y: t_dato_alumnos;
+     x: t_dato_arbol;
+     encontrado: boolean;
+     pos: integer;
+begin
+     buscar_legajo := false;
+     encontrado := false;
+     pos := 0;
+     PREORDEN(arb_leg, legajo, encontrado, x);
+     if encontrado = true then
+     begin
+          pos := x.pos_arch;
+          leer_archivo_1(a, pos, y);
+          if y.estado then
+          begin
+               buscar_legajo := true;
+          end;
+     end;
+end;
+
 
 procedure alta_alumnos (var a: t_archivo_alumnos; legajo: string; var arb_leg, arb_ayn: t_punt);
 var
@@ -265,27 +265,6 @@ begin
      end;
 end;
 
-function buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt; legajo:string):boolean;
-var
-     y: t_dato_alumnos;
-     x: t_dato_arbol;
-     encontrado: boolean;
-     pos: integer;
-begin
-     buscar_legajo := false;
-     encontrado := false;
-     pos := 0;
-     PREORDEN(arb_leg, legajo, encontrado, x);
-     if encontrado = true then
-     begin
-          pos := x.pos_arch;
-          leer_archivo_1(a, pos, y);
-          if y.estado then
-          begin
-               buscar_legajo := true;
-          end;
-     end;
-end;
 
 procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 var
@@ -563,6 +542,8 @@ begin
      end;
 end;
 
+
+
 procedure genera_arboles_alum(var a:t_archivo_alumnos; var raiz, raiz_2:t_punt);
 var
    x: t_dato_alumnos;
@@ -591,4 +572,6 @@ begin
   dato_a_guardar.pos_arch := pos;
   agregar(raiz, dato_a_guardar);
 end;
+
+
 end.  

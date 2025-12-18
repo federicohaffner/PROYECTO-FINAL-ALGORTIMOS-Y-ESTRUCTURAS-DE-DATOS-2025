@@ -2,22 +2,21 @@ unit Evaluaciones;
 {$mode ObjFPC}{$H+}
 interface
 uses
-    Classes, crt, SysUtils, archivos, usa_archivo, unit_arbol, usa_arbol, validaciones, alumnos, interfaz_aux;
+    Classes, Crt, SysUtils, Archivos, Usa_archivo, Unit_arbol, Usa_arbol, Validaciones, Alumnos, Interfaz_aux;
 
+procedure cargar_discapacidad(var disc: byte);
+function ingresar_legajo:string;
+procedure cargar_fecha (var r:t_dato_alumnos);
+procedure cargar_valoracion(var r:t_dato_evaluaciones; disc_alumno: array of boolean);
+procedure cargar_observacion(var r:t_dato_evaluaciones);
+procedure cargar_registro (var r:t_dato_evaluaciones; legajo: string; fecha:string; disc_alumno: array of boolean);
+procedure mostrar_registro_ev (x:t_dato_evaluaciones);
+procedure agregar_archivo_eval (var a:t_archivo_evaluaciones; legajo:string; fecha:string; pos:integer; var r: t_dato_evaluaciones; disc_alumno: array of boolean);
 procedure alta_evaluacion (var arb_ev, arb_leg, arb_ayn:t_punt; fecha: string; legajo:string; var e:t_archivo_evaluaciones; var a:t_archivo_alumnos);
 procedure consulta_ev (var arb_ev, arb_leg, arb_ayn:t_punt; fecha: string; legajo:string; var e:t_archivo_evaluaciones; var a: t_archivo_alumnos);
 procedure modificar_eval(var e: t_archivo_evaluaciones; var a: t_archivo_alumnos; var arb_ev, arb_leg, arb_ayn: t_punt; legajo: string; fecha: string);
 procedure genera_arbol_eval(var e:t_archivo_evaluaciones; var raiz:t_punt);
 procedure carga_arbol_eval(VAR raiz:t_punt; clave: string; pos: integer);
-procedure cargar_registro (var r:t_dato_evaluaciones; legajo: string; fecha:string; disc_alumno: array of boolean);
-procedure agregar_archivo_eval (var a:t_archivo_evaluaciones; legajo:string; fecha:string; pos:integer; var r: t_dato_evaluaciones; disc_alumno: array of boolean);
-procedure mostrar_registro_ev (x:t_dato_evaluaciones);
-procedure cargar_valoracion(var r:t_dato_evaluaciones; disc_alumno: array of boolean);
-{procedure cargar_fecha(var r:t_dato_evaluaciones); }
-procedure cargar_observacion(var r:t_dato_evaluaciones);
-function ingresar_legajo: string;
-function ingresar_fecha: string;
-procedure cargar_discapacidad(var disc: byte);
 
 implementation
 
@@ -54,74 +53,29 @@ begin
   end;
 end;
 
-function ingresar_legajo: string;
+procedure cargar_fecha (var r:t_dato_alumnos);
 var
-  l: string;
+   f: string[10];
 begin
-  clrscr;
-  DibujarMarco(20, 10, 60, 15, LightGreen);
-  TextoCentrado(11, 'INGRESO DE LEGAJO', White);
-  textcolor(LightGreen);
-  gotoxy(25, 13); write('Legajo (8 digitos) ');
-  textcolor(LightGreen);
-  gotoxy(22, 14); write('0- VOLVER: ');
-  gotoxy(22, 14); write('0. VOLVER: ');
-  textcolor(White);
-  readln(l);
-  while not legajo_valido(l) and (l <> '0') do
-  begin
+     clrscr;
+     DibujarMarco(15, 8, 65, 14, Green);
+     TextoCentrado(9, 'FECHA EVALUACION', White);
+     textcolor(LightGreen);
+     gotoxy(20, 11); write('Fecha (AAAA/MM/DD): ');
+     textcolor(White);
+     readln(f);
+     while not(fecha_valida(f)) do
+     begin
        clrscr;
-       DibujarMarco(20, 10, 60, 15, LightGreen);
-       TextoCentrado(11, 'INGRESO DE LEGAJO', White);
+       DibujarMarco(15, 8, 65, 14, Green);
        textcolor(LightRed);
-       gotoxy(25, 13); write('Legajo invalido.');
-        textcolor(LightRed);
-       gotoxy(25, 14); write('Reintente: ');
-       gotoxy(25, 13); write('Legajo invalido.');
+       gotoxy(20, 11); write('Fecha invalida.');
        textcolor(LightRed);
-       gotoxy(25, 14); write('Reintente ');
-       textcolor(LightRed);
-       gotoxy(22, 15); write('0- VOLVER: ');
-       gotoxy(22, 15); write('0. VOLVER: ');
+       gotoxy(20, 12); write('Intente nuevamente (AAAA/MM/DD): ');
        textcolor(White);
-       readln(l);
-  end;
-  ingresar_legajo := l;
-end;
-
-function ingresar_fecha: string;
-var
-  f: string;
-begin
-  clrscr;
-  DibujarMarco(18, 10, 62, 15, LightGreen);
-  TextoCentrado(11, 'INGRESO DE FECHA', White);
-  textcolor(LightGreen);
-  gotoxy(22, 13); write('Fecha (AAAA/MM/DD) ');
-  textcolor(LightGreen);
-  gotoxy(22, 14); write('0- VOLVER: ');
-  gotoxy(22, 14); write('0. VOLVER: ');
-  textcolor(White);
-  readln(f);
-  while not (fecha_valida(f)) and (f <> '0') do
-  begin
-    clrscr;
-    DibujarMarco(18, 10, 62, 15, LightGreen);
-    TextoCentrado(11, 'INGRESO DE FECHA', White);
-    textcolor(LightRed);
-    gotoxy(22, 13); write('Fecha invalida.');
-    textcolor(LightRed);
-    gotoxy(22, 14); write('Reintente (AAAA/MM/DD): ');
-    gotoxy(22, 13); write('Fecha invalida.');
-    textcolor(LightRed);
-    gotoxy(22, 14); write('Reintente (AAAA/MM/DD) ');
-    textcolor(LightRed);
-    gotoxy(22, 14); write('0- VOLVER: ');
-    gotoxy(22, 15); write('0. VOLVER: ');
-    textcolor(White);
-    readln(f);
-  end;
-  ingresar_fecha := f;
+       readln(f);
+     end;
+     r.fecha_nac := f;
 end;
 
 procedure cargar_valoracion(var r:t_dato_evaluaciones; disc_alumno: array of boolean);
@@ -175,27 +129,6 @@ begin
     TextoCentrado(19, 'Valoraciones cargadas correctamente', LightGreen);
     readkey;
 end;
-
-{procedure cargar_fecha(var r:t_dato_evaluaciones);
-var
-    fecha: string;
-begin
-    clrscr;
-    DibujarMarco(18, 10, 62, 15, LightGreen);
-    TextoCentrado(11, 'FECHA DE EVALUACION', White);
-    textcolor(LightGreen);
-    gotoxy(22, 13); write('Fecha (AAAA/MM/DD): ');
-    textcolor(White);
-    readln(fecha);
-    while not(fecha_valida(fecha)) do
-    begin
-       textcolor(LightRed);
-       gotoxy(22, 14); write('Fecha invalida. Reintente: ');
-       textcolor(White);
-       readln(fecha);
-    end;
-    r.fecha_ev := fecha;
-end;}
 
 procedure cargar_observacion(var r:t_dato_evaluaciones);
 var
@@ -319,7 +252,6 @@ begin
           gotoxy(20, 14); write('Desea reactivarlo? (S/N): ');
           textcolor(White);
           readln(op);
-          if upcase(op) = 'S' then
           if upcase(op) = 'S' then
           begin
               clrscr;

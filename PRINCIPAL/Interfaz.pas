@@ -2,7 +2,7 @@ unit Interfaz;
 {$mode ObjFPC}{$H+}
 interface
 uses
-   Classes, SysUtils, crt, archivos, unit_arbol, alumnos, evaluaciones, validaciones, listados, estadisticas, usa_arbol, usa_archivo, interfaz_aux;
+   Classes, SysUtils, Crt, Archivos, Unit_arbol, Alumnos, Evaluaciones, Validaciones, Listados, Estadisticas, Usa_arbol, Usa_archivo, Interfaz_aux, Inicializacion;
 
 procedure menu_principal;
 procedure menu_alumno( var a:t_archivo_alumnos; var arb_leg:t_punt; var arb_ayn:t_punt );
@@ -45,8 +45,6 @@ begin
         4:menu_estadisticas(a, e, arb_ev, arb_leg);
       end;
    until opcion=0;
-   TextoCentrado(28, 'Gracias por usar el sistema. Hasta luego!', LightGreen);
-   readkey;
    cerrar_archivo_1(a);
    cerrar_archivo_2(e);
 

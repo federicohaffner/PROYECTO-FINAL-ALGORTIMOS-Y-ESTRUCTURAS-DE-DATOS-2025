@@ -2,12 +2,11 @@ unit Estadisticas;
 {$mode ObjFPC}{$H+}
 interface
 uses
-    Classes, SysUtils, archivos, unit_arbol, usa_arbol, usa_archivo, interfaz_aux;
+    Classes, SysUtils, Archivos, Unit_arbol, Usa_arbol, Usa_archivo, Interfaz_aux;
 
 procedure calcular_evaluaciones_por_discapacidad(arb_ev: t_punt; var a:t_archivo_alumnos; arb_leg:t_punt; var contadores: t_vec_enteros; fecha_final, fecha_inicio: string);
 procedure mostrar_evaluaciones_por_discapacidad(var a:t_archivo_alumnos;  var arb_ev, arb_leg:t_punt);
 procedure discapacidades_mayor_dificultad(var e:t_archivo_evaluaciones; arb_ev:t_punt);
-{procedure burbuja(var vector_cadenas: array of string; var vector_enteros: array of integer); }
 procedure calcular_grados(arb_ev:t_punt; var e:t_archivo_evaluaciones; var puntos_dificultad: array of integer; fecha_inicio, fecha_final: string);
 procedure alumno_activos_por_dificultad(var a:t_archivo_alumnos);
 procedure cargar_periodo(var fecha_inicio, fecha_final: string);
@@ -186,29 +185,6 @@ begin
         readkey;
     end;
 end;
-
-{procedure burbuja(var vector_cadenas: array of string; var vector_enteros: array of integer);
-var
-    i, j, aux_int: integer;
-    aux_str: string;
-begin
-    for i := 1 to 5 - 1 do
-    begin
-        for j := 1 to 5 - i do
-        begin
-            if vector_enteros[j] < vector_enteros[j + 1] then
-            begin
-                aux_int := vector_enteros[j];
-                vector_enteros[j] := vector_enteros[j + 1];
-                vector_enteros[j + 1] := aux_int;
-
-                aux_str := vector_cadenas[j];
-                vector_cadenas[j] := vector_cadenas[j + 1];
-                vector_cadenas[j + 1] := aux_str;
-            end;
-        end;
-    end;
-end;  }
 
 procedure ordenamiento_seleccion(var vector_cadenas: t_vec_cadenas; var vector_enteros: t_vec_enteros);
 var
