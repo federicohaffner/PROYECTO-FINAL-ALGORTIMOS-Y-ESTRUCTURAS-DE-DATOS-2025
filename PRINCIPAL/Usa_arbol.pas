@@ -7,7 +7,6 @@ uses
 
 procedure crear_arbol (var raiz:t_punt);
 procedure agregar (var raiz:t_punt; x:t_dato_arbol);
-procedure agregar_arbol_eval(var raiz:t_punt; x:t_dato_arbol);
 procedure preorden(raiz:t_punt; buscado:string; var enc:boolean; var x:t_dato_arbol);
 procedure inorden(var raiz:t_punt);
 procedure suprime(var raiz:t_punt; x:t_dato_arbol);
@@ -32,27 +31,11 @@ begin
       raiz^.sad := nil;
    end
    else
-   if (raiz^.info.clave > x.clave) then
-      agregar (raiz^.sai, x)
-   else
-      agregar (raiz^.sad, x)
-end;
-
-procedure agregar_arbol_eval(var raiz:t_punt; x:t_dato_arbol);
-begin
-   if raiz = nil then
    begin
-      new(raiz);
-      raiz^.info := x;
-      raiz^.sai := nil;
-      raiz^.sad := nil;
-   end
-   else
-   begin
-      if x.clave < raiz^.info.clave then
-         agregar_arbol_eval(raiz^.sai, x)
-      else
-         agregar_arbol_eval(raiz^.sad, x);
+     if (raiz^.info.clave > x.clave) then
+        agregar (raiz^.sai, x)
+     else
+        agregar (raiz^.sad, x)
    end;
 end;
 
@@ -130,4 +113,4 @@ function arbol_lleno (raiz:t_punt): boolean;
 begin
    arbol_lleno := getheapstatus.totalfree < sizeof (t_nodo);
 end;
-end.
+end. 

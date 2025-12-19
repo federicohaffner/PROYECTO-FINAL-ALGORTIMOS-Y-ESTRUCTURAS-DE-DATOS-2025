@@ -2,7 +2,7 @@ unit Inicializacion;
     
 interface
 uses
-  SysUtils, Classes;
+  SysUtils, Classes, Archivos, Unit_arbol, Usa_arbol, Usa_archivo;
 
 procedure arbol_en_memoria(var a:t_archivo_alumnos; var e:t_archivo_evaluaciones; var arb_leg, arb_ayn, arb_ev:t_punt);
 
@@ -33,7 +33,6 @@ begin
           agregar(arb_ayn, dato_arb);
         end;
    end;
-
    crear_abrir_2(e);
    max := filesize(e);
    if max > 0 then
@@ -43,10 +42,8 @@ begin
           leer_archivo_2(e, i, y);
           dato_arb.clave := y.fecha_ev + ' ' + y.legajo;
           dato_arb.pos_arch := i;
-          agregar_arbol_eval(arb_ev, dato_arb);
+          agregar(arb_ev, dato_arb);
         end;
    end;
 end;
-
-    
 end.

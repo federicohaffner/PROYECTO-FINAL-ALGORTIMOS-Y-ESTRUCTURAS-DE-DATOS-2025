@@ -2,11 +2,13 @@ unit Alumnos;
 {$mode ObjFPC}{$H+}
 interface
 uses
-     Classes, SysUtils, Archivos, Ua_arbol, Validaciones, Unit_arbol, Usa_archivo, Interfaz_aux, Crt;
+     Classes, SysUtils, Archivos, Usa_arbol, Validaciones, Unit_arbol, Usa_archivo, Interfaz_aux, Crt;
 
+function Estado_Alumno(leg: string; arb: t_punt; var a: t_archivo_alumnos): byte;
+function Resolver_Estado_Alumno(leg: string; var a: t_archivo_alumnos; var arb_leg, arb_ayn: t_punt): boolean;
 procedure cargar_ayn(var r:t_dato_alumnos);
 procedure cargar_fecha_nac (var r:t_dato_alumnos);
-procedure cargar_disc (var r:t_dato_alumnos);
+procedure cargar_dif (var r:t_dato_alumnos);
 procedure cargar_registro (var r:t_dato_alumnos; legajo: string);
 procedure mostrar_registro_al (x:t_dato_alumnos);
 procedure agregar_archivo_alumno (var a:t_archivo_alumnos; legajo:string; pos:integer; var r:t_dato_alumnos);
@@ -15,24 +17,99 @@ procedure alta_alumnos (var a: t_archivo_alumnos; legajo: string; var arb_leg: t
 procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 procedure consulta_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 procedure modificar_alumno(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
-procedure genera_arboles_alum(var a:t_archivo_alumnos; var raiz, raiz_2:t_punt);
 procedure carga_arbol_alum(VAR raiz:t_punt; id: string; pos: integer);
 
 implementation
 
+function Estado_Alumno(leg: string; arb: t_punt; var a: t_archivo_alumnos): byte;
+var
+    enc: boolean;
+    x: t_dato_arbol;
+    reg: t_dato_alumnos;
+begin
+    preorden(arb, leg, enc, x);
+    if not enc then
+        estado_alumno := 0
+    else
+    begin
+        leer_archivo_1(a, x.pos_arch, reg);
+        if reg.estado then
+            estado_alumno := 2
+        else
+            estado_alumno := 1;
+    end;
+end;
+
+function Resolver_Estado_Alumno(leg: string; var a: t_archivo_alumnos; var arb_leg, arb_ayn: t_punt): boolean;
+var
+    enc: boolean;
+    x: t_dato_arbol;
+    reg: t_dato_alumnos;
+    respuesta: char;
+    estado: byte; { 0: No existe, 1: Baja, 2: Activo }
+begin
+    Resolver_Estado_Alumno := False;
+    estado := estado_alumno(leg, arb_leg, a);
+    case estado of
+         0:begin
+                clrscr;
+                DibujarMarco(15, 6, 65, 13, green);
+                TextoCentrado(7, 'ALUMNO NO ENCONTRADO', White);
+                textcolor(LightGray); TextoCentrado(8, 'Legajo: ' + leg, LightGreen);
+                textcolor(green);
+                gotoxy(16, 9); writeln('-------------------------------------------------');
+                textcolor(LightGreen); gotoxy(20, 11); write('Desea dar de alta este alumno? (S/N): ');
+                readln(respuesta);
+
+                if UpCase(respuesta) = 'S' then
+                begin
+                     clrscr;
+                     alta_alumnos(a, leg, arb_leg, arb_ayn);
+                     preorden(arb_leg, leg, enc, x);
+                     if enc then
+                     begin
+                          estado := 2;
+                          resolver_estado_alumno := true;
+                     end;
+                end;
+         end;
+         1:begin
+                clrscr;
+                DibujarMarco(20, 10, 60, 14, LightGreen);
+                TextoCentrado(11, 'ALUMNO DE BAJA', LightGreen);
+                textcolor(LightGray); TextoCentrado(12, 'El alumno existe pero esta inactivo.', LightGreen);
+                textcolor(LightGreen); gotoxy(25, 14); write('Desea reactivarlo? (S/N): ');
+                readln(respuesta);
+                if UpCase(respuesta) = 'S' then
+                begin
+                  clrscr;
+                  alta_alumnos(a, leg, arb_leg, arb_ayn);
+                  leer_archivo_1(a, x.pos_arch, reg);
+                  if reg.estado then
+                  begin
+                     estado := 2;
+                     resolver_estado_alumno := true;
+                  end;
+                end;
+         end;
+         2: resolver_estado_alumno := true;
+    end;
+end;
 
 procedure cargar_ayn(var r:t_dato_alumnos);
 var
    ayn: string;
 begin
      clrscr;
-     DibujarMarco(15, 8, 65, 14, Green);
-     TextoCentrado(9, 'APELLIDO Y NOMBRE', White);
+     DibujarMarco(15, 6, 65, 13, green);
+     TextoCentrado(8, 'APELLIDO Y NOMBRE', White);
+     textcolor(green);
+     gotoxy(16, 9); writeln('-------------------------------------------------');
      textcolor(LightGreen);
      gotoxy(20, 11); write('Apellido y Nombre: ');
      textcolor(White);
      readln(ayn);
-     while not(nombre_valido(ayn)) do
+     while not(escadena(ayn)) do
      begin
           clrscr;
           DibujarMarco(15, 8, 65, 14, Green);
@@ -51,8 +128,10 @@ var
    f: string[10];
 begin
      clrscr;
-     DibujarMarco(15, 8, 65, 14, Green);
-     TextoCentrado(9, 'FECHA DE NACIMIENTO', White);
+     DibujarMarco(15, 6, 65, 13, green);
+     TextoCentrado(8, 'FECHA DE NACIMIENTO', White);
+     textcolor(green);
+     gotoxy(16, 9); writeln('-------------------------------------------------');
      textcolor(LightGreen);
      gotoxy(20, 11); write('Fecha (AAAA/MM/DD): ');
      textcolor(White);
@@ -71,14 +150,14 @@ begin
      r.fecha_nac := f;
 end;
 
-procedure cargar_disc (var r:t_dato_alumnos);
+procedure cargar_dif (var r:t_dato_alumnos);
 var
    i:byte;
    op: char;
 begin
      clrscr;
      DibujarMarco(10, 4, 70, 22, Green);
-     TextoCentrado(5, 'REGISTRO DE DISCAPACIDADES', White);
+     TextoCentrado(5, 'REGISTRO DE DIFICULTADES', White);
      TextoCentrado(6, 'Marque (S/N)', LightGreen);
      textcolor(Green);
      gotoxy(11, 7);
@@ -87,7 +166,7 @@ begin
      begin
        textcolor(LightGray);
        gotoxy(15, 8 + (i * 2));
-       write(discapacidades[i], ': ');
+       write(dificultades[i], ': ');
        textcolor(White);
        readln(op);
        while (upcase(op) <> 'S') and (upcase(op) <> 'N') do
@@ -99,9 +178,9 @@ begin
          readln(op);
        end;
        if upcase(op) = 'S' then
-          r.discapacidades[i] := true
+          r.dificultades[i] := true
        else
-           r.discapacidades[i] := false;
+           r.dificultades[i] := false;
      end;
 end;
 
@@ -109,8 +188,8 @@ procedure cargar_registro (var r:t_dato_alumnos; legajo: string);
 begin
      r.legajo := legajo;
      cargar_ayn(r);
-     fecha_nac(r);
-     tiene_disc(r);
+     cargar_fecha_nac(r);
+     cargar_dif(r);
      r.estado := true;
 end;
 
@@ -154,11 +233,11 @@ begin
      primera := true;
      for i:= 1 to 5 do
      begin
-          if x.discapacidades[i] = true then
+          if x.dificultades[i] = true then
           begin
                textcolor(LightGray);
-               gotoxy(18, 16 + i);
-               write('- ', DISCAPACIDADES[i]);
+               gotoxy(18, 15 + i);
+               write('- ', DIFICULTADES[i]);
                primera := false;
           end;
      end;
@@ -169,17 +248,12 @@ begin
           write('(Ninguna registrada)');
      end;
      textcolor(White);
-     gotoxy(25, 22); write('Presione ENTER para continuar...');
-     readln;
 end;
-
-
 
 procedure agregar_archivo_alumno (var a:t_archivo_alumnos; legajo:string; pos:integer; var r: t_dato_alumnos);
 begin
      cargar_registro(r, legajo);
-     seek(a, pos);
-     write(a, r);
+     escribir_archivo_1(a, pos, r)
 end;
 
 function buscar_legajo(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt; legajo:string):boolean;
@@ -192,7 +266,7 @@ begin
      buscar_legajo := false;
      encontrado := false;
      pos := 0;
-     PREORDEN(arb_leg, legajo, encontrado, x);
+     preorden(arb_leg, legajo, encontrado, x);
      if encontrado = true then
      begin
           pos := x.pos_arch;
@@ -204,7 +278,6 @@ begin
      end;
 end;
 
-
 procedure alta_alumnos (var a: t_archivo_alumnos; legajo: string; var arb_leg, arb_ayn: t_punt);
 var
      pos: integer;
@@ -214,7 +287,7 @@ var
 begin
      encontrado := false;
      pos := 0;
-     PREORDEN(arb_leg, legajo, encontrado, x);
+     preorden(arb_leg, legajo, encontrado, x);
 
      if encontrado = false then
      begin
@@ -228,7 +301,7 @@ begin
           gotoxy(25, 13); writeln('   ALUMNO REGISTRADO CON EXITO   ');
           gotoxy(25, 14); writeln('---------------------------------');
           textcolor(White);
-          gotoxy(23, 16); write('Presione cualquier tecla para continuar...');
+          gotoxy(23, 16); write('Presione una tecla para continuar...');
           readkey;
      end
      else
@@ -259,12 +332,11 @@ begin
                gotoxy(25, 13); writeln('   ALUMNO REACTIVADO CON EXITO   ');
                gotoxy(25, 14); writeln('---------------------------------');
                textcolor(White);
-               gotoxy(23, 16); write('Presione cualquier tecla para continuar...');
+               gotoxy(23, 16); write('Presione una tecla para continuar...');
                readkey;
           end;
      end;
 end;
-
 
 procedure baja_alumnos(var a:t_archivo_alumnos; arb_leg:t_punt; var arb_ayn:t_punt ; legajo:string);
 var
@@ -275,7 +347,7 @@ var
 begin
      encontrado := false;
      pos := 0;
-     PREORDEN(arb_leg, legajo, encontrado, x);
+     preorden(arb_leg, legajo, encontrado, x);
      if encontrado = true then
      begin
           pos := x.pos_arch ;
@@ -285,35 +357,36 @@ begin
                y.estado := false;
                escribir_archivo_1(a, pos, y);
                clrscr;
-               textcolor(LightGreen);
-               gotoxy(25, 12); writeln('---------------------------------');
-               gotoxy(25, 13); writeln('  ALUMNO DADO DE BAJA CON EXITO  ');
-               gotoxy(25, 14); writeln('---------------------------------');
+               mostrar_registro_al (y);
+               textcolor(Red);
+               gotoxy(75, 3); writeln('---------------------------------');
+               gotoxy(75, 4); writeln('| ALUMNO DADO DE BAJA CON EXITO  | ');
+               gotoxy(75, 5); writeln('---------------------------------');
                textcolor(White);
-               gotoxy(23, 16); write('Presione cualquier tecla para continuar...');
+               gotoxy(75, 7); write('Presione una tecla para continuar...');
                readkey;
           end
           else
           begin
                clrscr;
-               textcolor(LightGreen);
+               textcolor(Red);
                gotoxy(25, 12); writeln('---------------------------------');
                gotoxy(25, 13); writeln('   ALUMNO YA ESTA DADO DE BAJA   ');
                gotoxy(25, 14); writeln('---------------------------------');
                textcolor(White);
-               gotoxy(23, 16); write('Presione cualquier tecla para continuar...');
+               gotoxy(23, 16); write('Presione una tecla para continuar...');
                readkey;
           end;
      end
      else
      begin
           clrscr;
-          textcolor(LightRed);
+          textcolor(Red);
           gotoxy(25, 12); writeln('---------------------------------');
           gotoxy(25, 13); writeln('     ALUMNO NO ENCONTRADO          ');
           gotoxy(25, 14); writeln('---------------------------------');
           textcolor(White);
-          gotoxy(23, 16); write('Presione cualquier tecla para continuar...');
+          gotoxy(23, 16); write('Presione una tecla para continuar...');
           readkey;
      end;
 end;
@@ -328,7 +401,7 @@ var
 begin
      encontrado := false;
      pos := 0;
-     PREORDEN(arb_leg, legajo, encontrado, x);
+     preorden(arb_leg, legajo, encontrado, x);
      if encontrado = true then
      begin
           pos := x.pos_arch;
@@ -349,7 +422,7 @@ begin
           begin
                clrscr;
                alta_alumnos(a, legajo, arb_leg, arb_ayn);
-               PREORDEN(arb_leg, legajo, encontrado, x);
+               preorden(arb_leg, legajo, encontrado, x);
                if encontrado = true then
                     consulta_alumnos(a, arb_leg, arb_ayn, legajo)
                else
@@ -365,92 +438,63 @@ var
      x: t_dato_arbol;
      encontrado: boolean;
      pos: integer;
-     op, i: byte;
+     opcion, i: byte;
      ayn: string;
      fecha: string;
-     disc: char;
+     dif: char;
 begin
      encontrado := false;
      pos := 0;
-     PREORDEN(arb_leg, legajo, encontrado, x);
+     preorden(arb_leg, legajo, encontrado, x);
      if encontrado = true then
      begin
           pos := x.pos_arch;
           leer_archivo_1(a, pos, y);
           repeat
                clrscr;
-               DibujarMarco(10, 2, 70, 24, Green);
-               TextoCentrado(3, 'MODIFICACION DE ALUMNO', White);
-               textcolor(LightGreen);
-               gotoxy(30, 4); write('Legajo: ', legajo);
-               textcolor(Green);
-               gotoxy(11, 5);
-               writeln('----------------------------------------------------------');
-               textcolor(LightGreen);
-               gotoxy(15, 7); write('DATOS ACTUALES:');
-               textcolor(LightGray);
-               gotoxy(15, 8); write('Apellido y Nombre: ', y.ayn);
-               gotoxy(15, 9); write('Fecha Nacimiento : ', y.fecha_nac);
-               gotoxy(15, 10); write('Estado           : ');
-               if y.estado then
-               begin
-                    textcolor(LightGreen);
-                    write('Activo');
-               end
-               else
-               begin
-                    textcolor(LightRed);
-                    write('De Baja');
-               end;
-               textcolor(Green);
-               gotoxy(11, 11);
-               writeln('----------------------------------------------------------');
-               textcolor(LightGreen);
-               gotoxy(15, 13); write('Que desea modificar?');
-               textcolor(White);
-               gotoxy(18, 15); write('1.');
-               textcolor(LightGray);
-               write('  Apellido y Nombre');
-               gotoxy(18, 17);
-               textcolor(White);
-               write('2.');
-               textcolor(LightGray);
-               write('  Fecha de Nacimiento');
-               gotoxy(18, 19);
-               textcolor(White);
-               write('3.');
-               textcolor(LightGray);
-               write('  Dificultades');
-               gotoxy(18, 21);
+               mostrar_registro_al(y);
+               DibujarMarco(75, 3, 107, 17, green);
+               gotoxy(80, 4);
                textcolor(white);
-               write('0.');
-               textcolor(LightGray);
-               write('  Guardar y Salir');
-               textcolor(LightGreen);
-               gotoxy(28, 23); write('Opcion: ');
+               writeln('MODIFICACION DE ALUMNO');
+               textcolor(green);
+               gotoxy(76, 5);
+               writeln('--------------------------------');
                textcolor(White);
-               readln(op);
-               case op of
+               gotoxy(78, 7); textcolor(White); write('1.'); textcolor(LightGray); write('  Apellido y Nombre');
+               gotoxy(78, 9); textcolor(White); write('2.'); textcolor(LightGray); write('  Fecha Nacimiento');
+               gotoxy(78, 11); textcolor(white); write('3.'); textcolor(LightGray); write('  Dificultades');
+               gotoxy(78, 13); textcolor(white); write('0.'); textcolor(LightGray); write('  Salir');
+               textcolor(green);
+               gotoxy(78, 15); write('Opcion: ');
+               textcolor(White);
+               readln(opcion);
+               case opcion of
                     1: begin
                          clrscr;
-                         DibujarMarco(15, 8, 65, 16, Green);
-                         TextoCentrado(9, 'MODIFICAR APELLIDO Y NOMBRE', White);
-                         textcolor(LightGreen);
-                         gotoxy(20, 11); write('Valor actual: ');
+                         mostrar_registro_al(y);
+                         DibujarMarco(75, 3, 119, 12, green);
+                         gotoxy(78, 4);
+                         textcolor(white);
+                         writeln('MODIFICAR APELLIDO Y NOMBRE');
+                         textcolor(green);
+                         gotoxy(76, 5);
+                         writeln('--------------------------------------------');
+                         textcolor(Green);
+                         gotoxy(77, 6); write('Apellido y nombre actual: ');
                          textcolor(LightGray);
-                         write(y.ayn);
+                         gotoxy(77,7);
+                         writeln(y.ayn);
                          textcolor(LightGreen);
-                         gotoxy(20, 13); write('Nuevo valor: ');
+                         gotoxy(77, 9); write('Apellido y nombre nuevo: ');
+                         gotoxy(77, 10);
                          textcolor(White);
                          readln(ayn);
-                         while not(nombre_valido(ayn)) do
+                         while not (nombre_valido(ayn)) do
                          begin
-                              clrscr;
-                              DibujarMarco(15, 8, 65, 14, Green);
-                              textcolor(LightRed);
-                              gotoxy(20, 13); write('Nombre invalido.');
-                              textcolor(LightRed);
-                              gotoxy(20, 14); write('Reintente: ');
+                              textcolor(Red);
+                              gotoxy(77, 9); write('Reintente:                ');
+                              gotoxy(77, 10);
                               textcolor(White);
                               readln(ayn);
                          end;
@@ -460,66 +504,83 @@ begin
                          carga_arbol_alum(arb_ayn, y.ayn, pos);
                          escribir_archivo_1(a, pos, y);
                          textcolor(LightGreen);
-                         TextoCentrado(15, 'Campo actualizado!', LightGreen);;
-                         readln;
+                         gotoxy(88, 13);
+                         writeln('Campo actualizado!');
+                         readkey;
                        end;
                     2: begin
                          clrscr;
-                         DibujarMarco(15, 8, 65, 16, Green);
-                         TextoCentrado(9, 'MODIFICAR FECHA DE NACIMIENTO', White);
-                         textcolor(LightGreen);
-                         gotoxy(20, 11); write('Valor actual: ');
+                         mostrar_registro_al(y);
+                         DibujarMarco(75, 3, 119, 12, green);
+                         gotoxy(83, 4);
+                         textcolor(white);
+                         writeln('MODIFICAR FECHA DE NACIMIENTO');
+                         textcolor(green);
+                         gotoxy(76, 5);
+                         writeln('--------------------------------------------');
+                         gotoxy(77, 6); write('Fecha de nacimiento cargada: ');
                          textcolor(LightGray);
-                         write(y.fecha_nac);
+                         gotoxy(77,7);
+                         writeln(y.fecha_nac);
                          textcolor(LightGreen);
-                         gotoxy(20, 13); write('Nuevo valor (AAAA/MM/DD): ');
+                         gotoxy(77, 9); write('Fecha de nacimiento por actualizar: ');
+                         gotoxy(77, 10);
                          textcolor(White);
                          readln(fecha);
                          while not(fecha_valida(fecha)) do
                          begin
-                              clrscr;
-                              DibujarMarco(15, 8, 65, 14, Green);
-                              textcolor(LightRed);
-                              gotoxy(20, 13); write('Fecha invalida.');
-                              textcolor(LightRed);
-                              gotoxy(20, 14); write('Reintente (AAAA/MM/DD): ');
+                              textcolor(RED);
+                              gotoxy(77,9); write('Reintente (AAAA/MM/DD):            ');
+                              gotoxy(77, 10);
                               textcolor(White);
                               readln(fecha);
                          end;
                          y.fecha_nac := fecha;
                          escribir_archivo_1(a, pos, y);
                          textcolor(LightGreen);
-                         TextoCentrado(15, 'Campo actualizado!', LightGreen);
-                         readln;
+                         gotoxy(88, 13);
+                         writeln('Campo actualizado!');
+                         readkey;
                        end;
                     3: begin
                          clrscr;
+                         DibujarMarco(75, 10, 119, 14, white);
+                         gotoxy(78, 11);
+                         textcolor(Green);
+                         writeln('En verde las dificultades que posee');
+                         gotoxy(78,12);
+                         textcolor(white);
+                         writeln('----------------------------------------');
+                         gotoxy(78, 13);
+                         textcolor(red);
+                         writeln('En rojo las dificultades que no posee');
                          DibujarMarco(10, 4, 70, 22, Green);
-                         TextoCentrado(5, 'MODIFICAR DISCAPACIDADES', White);
-                         TextoCentrado(6, 'Marque (S/N)', LightGreen);
+                         TextoCentrado(5, 'MODIFICAR DIFICULTADES', Green);
+                         TextoCentrado(6, 'Marque (S/N)', White);
                          textcolor(Green);
                          gotoxy(11, 7);
                          writeln('----------------------------------------------------------');
-
                          for i := 1 to 5 do
                          begin
-                              textcolor(LightGray);
+                              if y.dificultades[i] = true then
+                              textcolor(green)
+                              else
+                              textcolor(Red);
                               gotoxy(15, 8 + (i * 2));
-                              write(DISCAPACIDADES[i], ' (S/N): ');
-                              textcolor(White);
-                              readln(disc);
-                              while (upcase(disc) <> 'S') and (upcase(disc) <> 'N') do
+                              write(dificultades[i], ' (S/N): ');
+                              readln(dif);
+                              while (upcase(dif) <> 'S') and (upcase(dif) <> 'N') do
                               begin
-                                   textcolor(LightRed);
+                                   textcolor(red);
                                    gotoxy(15, 9 + (i * 2));
                                    write('Reintente(S/N): ');
                                    textcolor(White);
-                                   readln(disc);
+                                   readln(dif);
                               end;
-                              if upcase(disc) = 'S' then
-                                   y.discapacidades[i] := true
+                              if upcase(dif) = 'S' then
+                                   y.dificultades[i] := true
                               else
-                                   y.discapacidades[i] := false;
+                                   y.dificultades[i] := false;
                          end;
                          escribir_archivo_1(a, pos, y);
                          textcolor(LightGreen);
@@ -527,7 +588,7 @@ begin
                          readln;
                        end;
                end;
-          until op = 0;
+          until opcion = 0;
      end
      else
      begin
@@ -542,28 +603,6 @@ begin
      end;
 end;
 
-
-
-procedure genera_arboles_alum(var a:t_archivo_alumnos; var raiz, raiz_2:t_punt);
-var
-   x: t_dato_alumnos;
-   i,j: byte;
-begin
-  crear_arbol(raiz);
-  crear_arbol(raiz_2);
-  j:=filesize(a);
-  if j <> 0 then
-  begin
-    for i := 0 to j - 1 do
-    begin
-      seek(a, i);
-      read(a, x);
-      carga_arbol_alum(raiz,x.legajo, i);
-      carga_arbol_alum(raiz_2, x.ayn,i);
-    end;
-  end;
-end;
-
 procedure carga_arbol_alum(VAR raiz:t_punt; id: string; pos: integer);
 var
   dato_a_guardar: t_dato_arbol;
@@ -572,6 +611,4 @@ begin
   dato_a_guardar.pos_arch := pos;
   agregar(raiz, dato_a_guardar);
 end;
-
-
-end.  
+end.    
