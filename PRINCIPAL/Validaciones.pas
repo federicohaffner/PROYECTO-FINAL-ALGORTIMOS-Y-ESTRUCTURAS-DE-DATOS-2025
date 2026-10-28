@@ -21,6 +21,7 @@ var
 begin
    esValido := True;
    i := 1;
+   legajo_valido := False;
    if Length(legajo) <> 8 then
       esValido := False
    else
