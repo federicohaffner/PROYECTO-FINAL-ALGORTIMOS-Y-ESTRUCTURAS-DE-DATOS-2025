@@ -1,0 +1,16 @@
+# Compilados de Free Pascal / Lazarus
+*.o
+*.ppu
+*.a
+*.exe
+*.compiled
+*.lps
+backup/
+lib/
+
+# Binarios generados en Linux
+PRINCIPAL/Principal
+CHATTERBOT/CHATTERBOT
+
+# Archivos de datos que se generan al ejecutar
+*.dat
